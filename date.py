@@ -9,7 +9,8 @@ import datetime
 def gen_date_list(begin, end, join = False, exclude = []):
   ret = []
   for i in range(begin+1, end):
-      dt = str(datetime.datetime.now() - datetime.timedelta(days=(i))).split(" ")[0].replace("-","")
+      dt = datetime.datetime.now() - datetime.timedelta(days=(i))
+      dt = dt.strftime('%Y%m%d')
       if dt in exclude:
         continue
       ret.append(dt)
