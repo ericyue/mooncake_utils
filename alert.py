@@ -6,9 +6,15 @@ sys.setdefaultencoding("utf-8")
 base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(base)
 from slacker import Slacker
-
+import ConfigParser
+  
+conf = ConfigParser.ConfigParser({})
+conf.read("./alert.conf")
+channel = conf.get("slack","channel")
+token = conf.get("slack","token")
 
 slack = Slacker(token)
+
 
 def alert(msg, mail = True, slack = True, channel="#mooncake"):
     print msg
@@ -29,4 +35,5 @@ def send_slack(msg, channel="#mooncake"):
       attempt+=1
 
 if __name__ == "__main__":
-  alert("im alert")
+  pass
+  #alert("im alert")
