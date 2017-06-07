@@ -1,12 +1,24 @@
 # -*- coding:utf-8 -*-
-#
 
 # @author Yue Bin ( hi.moonlight@gmail.com )
 # @date 2017-06-07
 import time
 import datetime
+from dateutil.parser import parse
 
-def gen_date_list(begin, end, join = False, exclude = []):
+
+def gen_date_list(begin, days=7):
+  if type(begin) != datetime.datetime:
+    begin = parse(begin)
+ 
+  ret = []
+  for i in range(days):
+    dt = str(begin - datetime.timedelta(i+1)).split()[0].replace('-','')
+    ret.append(dt) 
+
+  return ret
+
+def gen_date_list_by_idx(begin, end, join = False, exclude = []):
   ret = []
   for i in range(begin+1, end):
       dt = datetime.datetime.now() - datetime.timedelta(days=(i))
@@ -28,13 +40,17 @@ def timestamp2datetime(timestamp):
   x = time.localtime(timestamp)
   return time.strftime('%Y-%m-%d %H:%M:%S',x)
 
-def get_today(delta = 1, raw = False, short = True, with_time = False):
+def gen_today(delta = 1, raw = False, short = True, with_time = False, only_time = False):
   dt = datetime.datetime.now()-datetime.timedelta(delta)
   if raw:
     return dt
 
   if short:
     str_dt = dt.strftime('%Y%m%d%H%M%S')
+  if only_time:
+    str_dt = str_dt[8:]
+    return str_dt
+
   if not with_time:
     str_dt = str_dt[:8]
   return str_dt
@@ -55,4 +71,4 @@ if __name__ == "__main__":
   print datetime2timestamp(datetime.datetime.now())
   print str2datetime('2017-04-03 01:11:11')
   print timestamp2datetime(1496820643)
-  print get_today(with_time=False,delta=10)
+  print get_today(with_time=False, delta=10)
