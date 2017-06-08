@@ -6,7 +6,7 @@ import time
 import datetime
 from dateutil.parser import parse
 
-def gen_date_list(begin, days=7):
+def gen_date_list_by_days(begin, days=7):
   if type(begin) != datetime.datetime:
     begin = parse(begin)
  
@@ -16,19 +16,6 @@ def gen_date_list(begin, days=7):
     ret.append(dt) 
 
   return ret
-
-def gen_latest_date_list(begin, end, join = False, exclude = []):
-  ret = []
-  for i in range(begin+1, end):
-      dt = datetime.datetime.now() - datetime.timedelta(days=(i))
-      dt = dt.strftime('%Y%m%d')
-      if dt in exclude:
-        continue
-      ret.append(dt)
-  if join:
-    return ",".join(ret)
-  return ret
-
 
 def gen_date_list(begin, end, join = False, exclude = [], exclude_today = True):
   if end == None:
@@ -58,6 +45,18 @@ def gen_date_list(begin, end, join = False, exclude = [], exclude_today = True):
       ret.append(dt)
       begin = begin + datetime.timedelta(days=(1))
 
+  if join:
+    return ",".join(ret)
+  return ret
+
+def gen_latest_date_list(begin, end, join = False, exclude = []):
+  ret = []
+  for i in range(begin+1, end):
+      dt = datetime.datetime.now() - datetime.timedelta(days=(i))
+      dt = dt.strftime('%Y%m%d')
+      if dt in exclude:
+        continue
+      ret.append(dt)
   if join:
     return ",".join(ret)
   return ret

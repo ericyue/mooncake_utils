@@ -6,9 +6,17 @@ base = os.path.dirname(os.path.abspath(__file__))
 
 from termcolor import colored, cprint
 from alert import *
+from mooncake_utils.date import *
 
 ABSPATH = os.path.dirname(os.path.abspath(sys.argv[0]))
-    
+
+def gen_input_date(per_day, days=10):
+  ret = []
+  for idx in range(days):
+    ret.append(gen_date_list_by_days(gen_today(idx), per_day))
+
+  return ret
+
 class Hadoop:
   conf = ConfigParser.ConfigParser({})
 
