@@ -61,7 +61,6 @@ def gen_latest_date_list(begin, end, join = False, exclude = []):
     return ",".join(ret)
   return ret
 
-
 def datetime2timestamp(date):
   return int(time.mktime(date.timetuple()))
 
