@@ -6,7 +6,6 @@ import time
 import datetime
 from dateutil.parser import parse
 
-
 def gen_date_list(begin, days=7):
   if type(begin) != datetime.datetime:
     begin = parse(begin)
@@ -18,7 +17,7 @@ def gen_date_list(begin, days=7):
 
   return ret
 
-def gen_date_list_by_idx(begin, end, join = False, exclude = []):
+def gen_latest_date_list(begin, end, join = False, exclude = []):
   ret = []
   for i in range(begin+1, end):
       dt = datetime.datetime.now() - datetime.timedelta(days=(i))
@@ -30,8 +29,41 @@ def gen_date_list_by_idx(begin, end, join = False, exclude = []):
     return ",".join(ret)
   return ret
 
+
+def gen_date_list(begin, end, join = False, exclude = []):
+  if type(begin) != datetime.datetime:
+    begin = parse(begin)
+  if type(end) != datetime.datetime:
+    end = parse(end)
+  if begin > end:
+    return []
+
+  dt_exclude = []
+  for day in exclude:
+    if type(day) != datetime.datetime:
+      day = parse(day)
+
+    dt_exclude.append(day)
+
+  ret = []
+  while begin <= end:
+      if begin in dt_exclude:
+        begin = begin + datetime.timedelta(days=(1))
+        continue
+      dt = begin.strftime('%Y%m%d')
+      ret.append(dt)
+      begin = begin + datetime.timedelta(days=(1))
+
+  if join:
+    return ",".join(ret)
+  return ret
+
+
 def datetime2timestamp(date):
   return int(time.mktime(date.timetuple()))
+
+def str2date(date):
+  return parse(date)
 
 def str2datetime(date, date_format='%Y-%m-%d %H:%M:%S'):
   return datetime.datetime.strptime(date, date_format)
@@ -72,3 +104,4 @@ if __name__ == "__main__":
   print str2datetime('2017-04-03 01:11:11')
   print timestamp2datetime(1496820643)
   print get_today(with_time=False, delta=10)
+  print gen_date_list(begin='20170201',end='20170303', exclude=['20170204'])
