@@ -30,7 +30,9 @@ def gen_latest_date_list(begin, end, join = False, exclude = []):
   return ret
 
 
-def gen_date_list(begin, end, join = False, exclude = []):
+def gen_date_list(begin, end, join = False, exclude = [], exclude_today = True):
+  if end == None:
+    end = datetime.datetime.now()
   if type(begin) != datetime.datetime:
     begin = parse(begin)
   if type(end) != datetime.datetime:
@@ -39,6 +41,8 @@ def gen_date_list(begin, end, join = False, exclude = []):
     return []
 
   dt_exclude = []
+  if exclude_today:
+    dt_exclude.append(parse(datetime.datetime.now().strftime('%Y%m%d')))
   for day in exclude:
     if type(day) != datetime.datetime:
       day = parse(day)
@@ -98,10 +102,11 @@ def int2datestr(date, diff):
   return time.strftime('%Y%m%d',ltime)
 
 if __name__ == "__main__":
-  print gen_date_list(0, 4)
-  print gen_date_list(0, 4, join=True)
-  print datetime2timestamp(datetime.datetime.now())
-  print str2datetime('2017-04-03 01:11:11')
-  print timestamp2datetime(1496820643)
-  print get_today(with_time=False, delta=10)
-  print gen_date_list(begin='20170201',end='20170303', exclude=['20170204'])
+  #print gen_date_list(0, 4)
+  #print gen_date_list(0, 4, join=True)
+  #print datetime2timestamp(datetime.datetime.now())
+  #print str2datetime('2017-04-03 01:11:11')
+  #print timestamp2datetime(1496820643)
+  #print get_today(with_time=False, delta=10)
+  print gen_date_list(begin='20170301',end='20170303', exclude=['20170204'])
+  print gen_date_list(begin='20170301',end=None, exclude=['20170204'],exclude_today=False)
