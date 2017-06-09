@@ -29,6 +29,17 @@ class Hadoop:
     self.load_conf()
     print "jobname_base [%s]" % self.job_name 
 
+  def filter_input(self, days, input_base):
+    ret = []
+    for day in days:
+      if not self.has_hadoop_dir(input_base % day):
+        cprint("ignore not-exist input path [%s]" % (input_base % day), 'red', 'on_yellow')
+        continue
+      ret.append(day)
+
+    return input_base % (','.join(ret))
+
+
   def load_conf(self):
     self.job_name_base =  ABSPATH.split("/")[-1].strip()
     self.mapper_file_name = "map.py"
@@ -67,10 +78,8 @@ class Hadoop:
     self.logpath = self.homepath + "/log/"
     self.temppath = self.homepath + "/temp"
 
-  def run(self, input_path,
-  						get_result_to_local=True,
-  						need_alert=False,
-  						getmerge=False):
+  def run(self, input_path,get_result_to_local=True,need_alert=False,
+            getmerge=False):
 
       cprint('\n[hadoop job is preparing ...]', 'white', 'on_magenta')
       print ""

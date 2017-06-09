@@ -6,14 +6,21 @@ import time
 import datetime
 from dateutil.parser import parse
 
-def gen_date_list_by_days(begin, days=7):
+def gen_date_list_by_days(begin = None, days=7, join = False):
+  if not begin:
+    begin = gen_today(delta=1, raw = True)
+
   if type(begin) != datetime.datetime:
     begin = parse(begin)
  
   ret = []
   for i in range(days):
-    dt = str(begin - datetime.timedelta(i+1)).split()[0].replace('-','')
+    dt = begin - datetime.timedelta(i+1)
+    dt = dt.strftime('%Y%m%d')
     ret.append(dt) 
+
+  if join:
+    ret = ",".join(ret)
 
   return ret
 
