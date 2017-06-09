@@ -22,7 +22,7 @@ class Hadoop:
   conf = ConfigParser.ConfigParser({})
   run_date = None
 
-  def __init__(self,run_date , conf_path = "./hadoop.conf"):
+  def __init__(self,run_date , conf_path = "./conf/hadoop.conf"):
     cprint("begin init Hadoop using [%s]" % conf_path, 'white', 'on_red')
     self.conf.read(conf_path)
     self.run_date = run_date
@@ -90,11 +90,11 @@ class Hadoop:
               "  -D mapred.job.priority="+ self.job_priority + \
               "  -D mapred.reduce.tasks="+self.reduce_num + \
               "  -D mapred.job.name=mooncake_\""+self.job_name+"\"" + \
-              "  -D mapreduce.reduce.memory.mb=3500 " +\
-              "  -D mapreduce.map.memory.mb=3500 " +\
-              "  -D mapreduce.reduce.java.opts=-Xmx3500M " +\
-              "  -D mapreduce.map.java.opts=-Xmx3500M " +\
-              "  -D mapred.child.java.opts=-Xmx3500m " +\
+              "  -D mapreduce.reduce.memory.mb=3500" +\
+              "  -D mapreduce.map.memory.mb=3500" +\
+              "  -D mapreduce.reduce.java.opts=-Xmx3500M" +\
+              "  -D mapreduce.map.java.opts=-Xmx3500M" +\
+              "  -D mapred.child.java.opts=-Xmx3500m" +\
               "  -D mapred.combine.input.format.local.only=false"+\
               "  -input " + input_path.strip() +\
               "  -output "+ self.output_path.strip() +\
@@ -121,9 +121,9 @@ class Hadoop:
           if get_result_to_local:
               os.system("mkdir -p ./output/%s" % self.run_date)
               if get_merge:
-                os.system("%s/bin/hadoop fs -getmerge  %s ./output/%s/%s" % (self.hadoop_home_path,output_path,self.run_date,output_path.split("/")[-2]))
+                os.system("%s fs -getmerge  %s ./output/%s/%s" % (self.hadoop_bin_path,output_path,self.run_date,output_path.split("/")[-2]))
               else:
-                os.system("%s/bin/hadoop fs -get  %s ./output/%s/%s" % (self.hadoop_home_path,output_path,self.run_date,output_path.split("/")[-2]))
+                os.system("%s fs -get  %s ./output/%s/%s" % (self.hadoop_bin_path,output_path,self.run_date,output_path.split("/")[-2]))
               local_path = "./output/%s/%s" % (self.run_date,output_path.split("/")[-2])
               cprint("get hdfs result to local[%s]" % local_path,"white","on_green")
       else:
@@ -150,11 +150,11 @@ class Hadoop:
   def copy_to_hadoop_retry(self,command, opath = ''):
       for i in range(self.hadoop_retry_times) :
           if opath != '':
-              ret = os.system( self.hadoop_home_path + "/bin/hadoop fs -ls " + opath )
+              ret = os.system( self.hadoop_bin_path + " fs -ls " + opath )
               if ret == 0:
-                  os.system( self.hadoop_home_path + '/bin/hadoop fs -rm ' + opath + '/*')
+                  os.system( self.hadoop_bin_path + ' fs -rm ' + opath + '/*')
               else:
-                  os.system( self.hadoop_home_path + '/bin/hadoop fs -mkdir ' + opath )
+                  os.system( self.hadoop_bin_path + ' fs -mkdir ' + opath )
           ret = os.system(command)
           if ret != 0 :
               orgtime.sleep(self.hadoop_retry_interval)
@@ -184,7 +184,7 @@ class Hadoop:
   
   def has_hadoop_file(self,path,filename):
       cprint( '[check hadoop file %s/%s]' % (path,filename),"white","on_red")
-      ret = os.system( self.conf.hadoop_home_path + "/bin/hadoop fs -ls " + path + filename )
+      ret = os.system( self.conf.hadoop_bin_path + " fs -ls " + path + filename )
       if ret == 0:
           return True
       return False
@@ -206,10 +206,10 @@ class Hadoop:
       cmd = "tar czf ./temp/"+self.tar_alias_name+" self.conf bin data *.py "
       print cmd
       os.system(cmd)
-      cmd = "%s/bin/hadoop fs -rm %s" % (self.hadoop_home_path,self.dfs_mapred_tar)
+      cmd = "%s fs -rm %s" % (self.hadoop_bin_path,self.dfs_mapred_tar)
       print cmd
       os.system(cmd)
-      cmd = "%s/bin/hadoop fs -put ./temp/%s %s " %(self.hadoop_home_path,self.tar_alias_name, self.dfs_mapred_tar)
+      cmd = "%s fs -put ./temp/%s %s " %(self.hadoop_bin_path,self.tar_alias_name, self.dfs_mapred_tar)
       print cmd
       os.system(cmd)
   def reload(self):
