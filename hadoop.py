@@ -40,6 +40,7 @@ class Hadoop:
 
     self.bin_dir = self.output_base+"tar_bin/"
 
+    self.streaming_jar = self.conf.get("hadoop","streaming_jar","streaming")
     self.job_priority = self.conf.get("hadoop","job_priority","VERY_HIGH")
     self.memory_limit = self.conf.get("hadoop","memory_limit",2000)
     self.reduce_capacity = self.conf.get("hadoop","reduce_capacity",1000)
@@ -77,13 +78,13 @@ class Hadoop:
       self.prepare_local_dirs()
       self.pack_upload()
       cprint("[input hdfs path]" ,'white', 'on_red')
-      print input_path.strip()
+      print input_path
       cprint("[output hdfs path]",'white', 'on_red')
       print self.output_path
       cprint("[current job name]",'white', 'on_red')
-      print self.job_name.strip()
+      print self.job_name
       
-      command = self.hadoop_bin_path+" streaming " 
+      command = self.hadoop_bin_path+" " + self.streaming_jar 
       command += "  -D mapred.job.map.capacity=10000" +\
               "  -D mapred.job.reduce.capacity=10000"+\
               "  -D mapred.min.split.size=1024000000"+ \
@@ -101,8 +102,8 @@ class Hadoop:
               "  -cacheArchive "+self.dfs_mapred_tar+"#"+self.tar_alias_name
 
       command += "  -cacheArchive "+ self.python_archive +\
-              "  -mapper \" "+" "+ self.python_bin_path + " " + self.tar_alias_name+"/bin/"+ self.mapper_file_name +" "+self.job_name +"\""+\
-              "  -reducer \" "+" "+ self.python_bin_path + self.tar_alias_name+"/bin/"+ self.reducer_file_name +" "+self.job_name +"\""
+              "  -mapper \" "+ self.python_bin_path + " " + self.tar_alias_name+"/bin/"+ self.mapper_file_name +" "+self.job_name +"\""+\
+              "  -reducer \" "+ self.python_bin_path + self.tar_alias_name+"/bin/"+ self.reducer_file_name +" "+self.job_name +"\""
   
       pretty_cmd = command.replace("  ", "\n\t")
   
@@ -134,7 +135,7 @@ class Hadoop:
       return ret
   
   def run_hadoop_retry(self, command, opath = ''):
-      cprint( "[run hadoop job]","white","on_red")
+      cprint( "[begin hadoop job]","white","on_red")
       for i in range(self.hadoop_retry_times) :
           if opath != '':
               ret = os.system( self.hadoop_bin_path + " fs -ls " + opath )
