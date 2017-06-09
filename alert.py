@@ -15,7 +15,6 @@ token = conf.get("slack","token")
 
 slack = Slacker(token)
 
-
 def alert(msg, mail = True, slack = True, channel="#mooncake"):
     print msg
     try:
