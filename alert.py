@@ -35,4 +35,3 @@ def send_slack(msg, channel="#mooncake"):
 
 if __name__ == "__main__":
   pass
-  #alert("im alert")
