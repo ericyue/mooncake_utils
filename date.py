@@ -106,5 +106,6 @@ if __name__ == "__main__":
   #print str2datetime('2017-04-03 01:11:11')
   #print timestamp2datetime(1496820643)
   #print get_today(with_time=False, delta=10)
+  print gen_today(only_time=True)
   print gen_date_list(begin='20170301',end='20170303', exclude=['20170204'])
   print gen_date_list(begin='20170301',end=None, exclude=['20170204'],exclude_today=False)

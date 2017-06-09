@@ -23,7 +23,7 @@ class Hadoop:
   run_date = None
 
   def __init__(self,run_date , conf_path = "./conf/hadoop.conf"):
-    cprint("begin init Hadoop using [%s]" % conf_path, 'white', 'on_red')
+    cprint("begin init Hadoop using [%s]" % conf_path, 'red', 'on_yellow')
     self.conf.read(conf_path)
     self.run_date = run_date
     self.load_conf()
@@ -35,8 +35,9 @@ class Hadoop:
     self.reducer_file_name = "reduce.py"
 
     self.output_base = self.conf.get("hadoop","output_base")
-    self.output_path = "%s/%s/%s/%s" % (self.output_base, self.job_name_base, self.run_date, gen_today(only_time=True))
-    self.job_name = "%s_%s_%s" % (self.job_name_base, self.run_date, self.output_path.split("/")[-2])
+    job_time = gen_today(only_time=True)
+    self.output_path = "%s/%s/%s/%s" % (self.output_base, self.job_name_base, self.run_date, job_time)
+    self.job_name = "%s_%s_%s" % (self.job_name_base, self.run_date, job_time)
 
     self.bin_dir = self.output_base+"tar_bin/"
 
@@ -68,11 +69,10 @@ class Hadoop:
 
   def run(self, input_path,
   						get_result_to_local=True,
-  						online=False,
   						need_alert=False,
   						getmerge=False):
 
-      cprint('\n[hadoop job is preparing ...]', 'white', 'on_red')
+      cprint('\n[hadoop job is preparing ...]', 'white', 'on_magenta')
       print ""
       self.prepare_local_dirs()
       self.pack_upload()
@@ -102,7 +102,7 @@ class Hadoop:
 
       command += "  -cacheArchive "+ self.python_archive +\
               "  -mapper \" "+ self.python_bin_path + " " + self.tar_alias_name+"/bin/"+ self.mapper_file_name +" "+self.job_name +"\""+\
-              "  -reducer \" "+ self.python_bin_path + self.tar_alias_name+"/bin/"+ self.reducer_file_name +" "+self.job_name +"\""
+              "  -reducer \" "+ self.python_bin_path +" " + self.tar_alias_name+"/bin/"+ self.reducer_file_name +" "+self.job_name +"\""
   
       pretty_cmd = command.replace("  ", "\n\t")
   
