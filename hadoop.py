@@ -89,7 +89,7 @@ class Hadoop:
               "  -D mapred.min.split.size=1024000000"+ \
               "  -D mapred.job.priority="+ self.job_priority + \
               "  -D mapred.reduce.tasks="+self.reduce_num + \
-              "  -D mapred.job.name=mooncake_\""+self.job_name+"\"" + \
+              "  -D mapred.job.name=mooncake_"+self.job_name + \
               "  -D mapreduce.reduce.memory.mb=3500" +\
               "  -D mapreduce.map.memory.mb=3500" +\
               "  -D mapreduce.reduce.java.opts=-Xmx3500M" +\
