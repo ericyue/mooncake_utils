@@ -56,7 +56,6 @@ class Hadoop:
     self.dfs_mapred_tar = self.bin_dir+self.job_name+".tar.gz"
     self.tar_alias_name = os.popen("basename "+self.dfs_mapred_tar+"|sed s/\.tar\.gz//").read().strip()
 
-    self.hadoop_home_path = self.conf.get("hadoop", "hadoop_home_path")
     self.hadoop_bin_path = self.conf.get("hadoop", "hadoop_bin_path")
 
     self.homepath = os.path.abspath("./")
@@ -195,16 +194,6 @@ class Hadoop:
       cmd = "%s fs -put ./temp/%s %s " %(self.hadoop_bin_path,self.tar_alias_name, self.dfs_mapred_tar)
       print cmd
       os.system(cmd)
-
-  def reload(self):
-      self.binpath = self.homepath + "/bin/"
-      self.confpath = self.homepath + "/conf/"
-      self.datapath = self.homepath + "/data/"
-      self.logpath = self.homepath + "/log/"
-      self.temppath = self.homepath + "/temp"
-      self.bin_dir = self.output_base+"tar_bin/"
-      self.dfs_mapred_tar = self.bin_dir+self.job_name+".tar.gz"
-      self.tar_alias_name = os.popen("basename "+self.dfs_mapred_tar+"|sed s/\.tar\.gz//").read().strip()
 
 if __name__ == "__main__":
   s = Hadoop()
