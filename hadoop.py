@@ -72,7 +72,7 @@ class Hadoop:
   						getmerge=False):
       self.job_name = "%s_%s_%s" % (self.job_name_base, self.run_date, self.output_path.split("/")[-2])
 
-      cprint('\n[hadoop job is preparing ...]\n', 'white', 'on_red')
+      cprint('\n[hadoop job is preparing ...]', 'white', 'on_red')
       print ""
       self.prepare_local_dirs()
       self.pack_upload()
@@ -137,7 +137,7 @@ class Hadoop:
       cprint( "[run hadoop job]","white","on_red")
       for i in range(self.hadoop_retry_times) :
           if opath != '':
-              ret = os.system( self.hadoop_bin_path + "fs -ls " + opath )
+              ret = os.system( self.hadoop_bin_path + " fs -ls " + opath )
               if ret == 0:
                   os.system( self.hadoop_bin_path + ' fs -rmr ' + opath)
           ret = os.system(command)
@@ -162,17 +162,6 @@ class Hadoop:
               return 0
       return -1
   
-  def run_local_retry(command, opath = ''):
-      for i in range(self.conf.hadoop_retry_times) :
-          if opath != '' and opath != '/':
-              make_new_out(opath)
-          ret = os.system(command)
-          if ret != 0 :
-              orgtime.sleep(self.conf.hadoop_retry_interval)
-          else:
-              return 0
-      return -1
-  
   def has_hadoop_dir(self,opath):
       if opath != '':
           ret = os.system( self.hadoop_bin_path + " fs -ls " + opath )
@@ -183,27 +172,20 @@ class Hadoop:
       return False
   
   def has_hadoop_file(self,path,filename):
-      cprint( '[check hadoop file %s/%s]' % (path,filename),"white","on_red")
       ret = os.system( self.conf.hadoop_bin_path + " fs -ls " + path + filename )
       if ret == 0:
           return True
       return False
   
-  def make_new_out(self, path):
-      if os.path.isdir(path):
-          os.system('rm -rf ' + path)
-          print 'make new out',path,'already exist'
-      os.system('mkdir -p ' + path)
-  
   def prepare_local_dirs(self):
       cprint( "[preparing local dirs]","white","on_red")
-      cmd = "mkdir -p ./data ./self.conf ./log ./temp"
+      cmd = "mkdir -p ./data ./log ./temp ./conf"
       print cmd
       os.system(cmd)
   
   def pack_upload(self):
       cprint( "[pack upload and put to hadoop]","white","on_red")
-      cmd = "tar czf ./temp/"+self.tar_alias_name+" self.conf bin data *.py "
+      cmd = "tar czf ./temp/"+self.tar_alias_name+" conf bin data *.py "
       print cmd
       os.system(cmd)
       cmd = "%s fs -rm %s" % (self.hadoop_bin_path,self.dfs_mapred_tar)
@@ -214,7 +196,7 @@ class Hadoop:
       os.system(cmd)
   def reload(self):
       self.binpath = self.homepath + "/bin/"
-      self.self.confpath = self.homepath + "/self.conf/"
+      self.confpath = self.homepath + "/conf/"
       self.datapath = self.homepath + "/data/"
       self.logpath = self.homepath + "/log/"
       self.temppath = self.homepath + "/temp"
