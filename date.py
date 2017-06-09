@@ -6,18 +6,16 @@ import time
 import datetime
 from dateutil.parser import parse
 
-def gen_latest_date_list(begin, end, join = False, exclude = []):
+def gen_date_list_by_days(begin, days=7):
+  if type(begin) != datetime.datetime:
+    begin = parse(begin)
+ 
   ret = []
-  for i in range(begin+1, end):
-      dt = datetime.datetime.now() - datetime.timedelta(days=(i))
-      dt = dt.strftime('%Y%m%d')
-      if dt in exclude:
-        continue
-      ret.append(dt)
-  if join:
-    return ",".join(ret)
-  return ret
+  for i in range(days):
+    dt = str(begin - datetime.timedelta(i+1)).split()[0].replace('-','')
+    ret.append(dt) 
 
+  return ret
 
 def gen_date_list(begin, end, join = False, exclude = [], exclude_today = True):
   if end == None:
@@ -51,6 +49,17 @@ def gen_date_list(begin, end, join = False, exclude = [], exclude_today = True):
     return ",".join(ret)
   return ret
 
+def gen_latest_date_list(begin, end, join = False, exclude = []):
+  ret = []
+  for i in range(begin+1, end):
+      dt = datetime.datetime.now() - datetime.timedelta(days=(i))
+      dt = dt.strftime('%Y%m%d')
+      if dt in exclude:
+        continue
+      ret.append(dt)
+  if join:
+    return ",".join(ret)
+  return ret
 
 def datetime2timestamp(date):
   return int(time.mktime(date.timetuple()))
@@ -97,5 +106,6 @@ if __name__ == "__main__":
   #print str2datetime('2017-04-03 01:11:11')
   #print timestamp2datetime(1496820643)
   #print get_today(with_time=False, delta=10)
+  print gen_today(only_time=True)
   print gen_date_list(begin='20170301',end='20170303', exclude=['20170204'])
   print gen_date_list(begin='20170301',end=None, exclude=['20170204'],exclude_today=False)

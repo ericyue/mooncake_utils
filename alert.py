@@ -9,7 +9,7 @@ from slacker import Slacker
 import ConfigParser
   
 conf = ConfigParser.ConfigParser({})
-conf.read("./alert.conf")
+conf.read("./conf/alert.conf")
 channel = conf.get("slack","channel")
 token = conf.get("slack","token")
 
