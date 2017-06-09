@@ -30,16 +30,15 @@ class Hadoop:
     print "jobname_base [%s]" % self.job_name 
 
   def load_conf(self):
-    self.job_name = ABSPATH.split("/")[-1].strip()
-    self.job_name_base = self.job_name
+    self.job_name_base =  ABSPATH.split("/")[-1].strip()
     self.mapper_file_name = "map.py"
     self.reducer_file_name = "reduce.py"
 
     self.output_base = self.conf.get("hadoop","output_base")
     self.output_path = "%s/%s/%s/%s" % (self.output_base, self.job_name_base, self.run_date, gen_today(only_time=True))
+    self.job_name = "%s_%s_%s" % (self.job_name_base, self.run_date, self.output_path.split("/")[-2])
 
     self.bin_dir = self.output_base+"tar_bin/"
-    self.dfs_mapred_tar = self.bin_dir+self.job_name+".tar.gz"
 
     self.job_priority = self.conf.get("hadoop","job_priority","VERY_HIGH")
     self.memory_limit = self.conf.get("hadoop","memory_limit",2000)
@@ -52,6 +51,8 @@ class Hadoop:
 
     self.python_archive = self.conf.get("hadoop","python_archive")
     self.python_bin_path = self.conf.get("hadoop","python_bin_path")
+    
+    self.dfs_mapred_tar = self.bin_dir+self.job_name+".tar.gz"
     self.tar_alias_name = os.popen("basename "+self.dfs_mapred_tar+"|sed s/\.tar\.gz//").read().strip()
 
     self.hadoop_home_path = self.conf.get("hadoop", "hadoop_home_path")
@@ -70,7 +71,6 @@ class Hadoop:
   						online=False,
   						need_alert=False,
   						getmerge=False):
-      self.job_name = "%s_%s_%s" % (self.job_name_base, self.run_date, self.output_path.split("/")[-2])
 
       cprint('\n[hadoop job is preparing ...]', 'white', 'on_red')
       print ""
@@ -194,6 +194,7 @@ class Hadoop:
       cmd = "%s fs -put ./temp/%s %s " %(self.hadoop_bin_path,self.tar_alias_name, self.dfs_mapred_tar)
       print cmd
       os.system(cmd)
+
   def reload(self):
       self.binpath = self.homepath + "/bin/"
       self.confpath = self.homepath + "/conf/"
