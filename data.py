@@ -12,6 +12,4 @@ def read_mmap(fn):
       yield line.rstrip('\n')
 
 if __name__ == "__main__":
-  for i in read_mmap('/data2/yuebin/sixroom/zhubo2vec/output/follow_full_20170519.log'):
-      print i
-      break
+    pass
