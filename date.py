@@ -8,7 +8,7 @@ from dateutil.parser import parse
 
 def gen_date_list_by_days(begin = None, days=7, join = False):
   if not begin:
-    begin = gen_today(delta=1, raw = True)
+    begin = gen_today(delta=0, raw = True)
 
   if type(begin) != datetime.datetime:
     begin = parse(begin)
