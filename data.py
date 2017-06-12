@@ -11,5 +11,13 @@ def read_mmap(fn):
     for line in iter(map.readline, ""):
       yield line.rstrip('\n')
 
+def trunc(f, n = 4):
+  s = '{}'.format(f)
+  if 'e' in s or 'E' in s:
+      return float('{0:.{1}f}'.format(f, n))
+  i, p, d = s.partition('.')
+  ret = '.'.join([i, (d+'0'*n)[:n]])
+  return float(ret)
+
 if __name__ == "__main__":
     pass
