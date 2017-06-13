@@ -78,6 +78,8 @@ def str2datetime(date, date_format='%Y-%m-%d %H:%M:%S'):
   return datetime.datetime.strptime(date, date_format)
 
 def timestamp2datetime(timestamp):
+  if type(timestamp) == str:
+    timestamp = int(timestamp)
   x = time.localtime(timestamp)
   return time.strftime('%Y-%m-%d %H:%M:%S',x)
 
