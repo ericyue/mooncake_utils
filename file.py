@@ -9,8 +9,9 @@ def mkdirp(directory):
   if not os.path.isdir(directory):
     os.makedirs(directory)
 
-def rm_folder(path):
+def rm_folder(path, debug = False):
   files = glob.glob(path)
   for one in files:
     print "removing [%s]", one
-    os.remove(one)
+    if not debug:
+      os.remove(one)
