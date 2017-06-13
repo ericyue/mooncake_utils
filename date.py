@@ -6,6 +6,16 @@ import time
 import datetime
 from dateutil.parser import parse
 
+def datediff(dt, base = None, unit = 'day'):
+  if not base:
+    base = datetime.datetime.now()
+  if unit == "day":
+    diff = (base - dt).days
+  else:
+    diff = None
+
+  return diff
+
 def gen_date_list_by_days(begin = None, days=7, join = False):
   if not begin:
     begin = gen_today(delta=0, raw = True)
@@ -79,9 +89,9 @@ def str2datetime(date, date_format='%Y-%m-%d %H:%M:%S'):
 
 def timestamp2datetime(timestamp):
   if type(timestamp) == str:
-    timestamp = int(timestamp)
+    timestamp = int(float(timestamp))
   x = time.localtime(timestamp)
-  return time.strftime('%Y-%m-%d %H:%M:%S',x)
+  return str2date(time.strftime('%Y-%m-%d %H:%M:%S',x))
 
 def gen_today(delta = 1, raw = False, short = True, with_time = False, only_time = False):
   dt = datetime.datetime.now()-datetime.timedelta(delta)
