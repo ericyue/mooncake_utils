@@ -4,6 +4,7 @@
 # @date 2017-06-07
 import os
 import glob
+import shutil
 
 def mkdirp(directory):
   if not os.path.isdir(directory):
@@ -15,3 +16,5 @@ def rm_folder(path, debug = False):
     print "removing [%s]", one
     if not debug:
       os.remove(one)
+
+
