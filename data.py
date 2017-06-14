@@ -19,5 +19,27 @@ def trunc(f, n = 4):
   ret = '.'.join([i, (d+'0'*n)[:n]])
   return float(ret)
 
+def parse_int(m, default = 0):
+  if type(m) == int:
+    return m
+  elif type(m) == str:
+    try:
+      return int(m)
+    except:
+      return default
+  else:
+    raise Exception('error input %s, cannot parse' % m)
+
+def parse_float(m, default = 0.0):
+  if type(m) == int:
+    return m
+  elif type(m) == str:
+    try:
+      return float(m)
+    except:
+      return default
+  else:
+    raise Exception('error input %s, cannot parse' % m)
+
 if __name__ == "__main__":
     pass

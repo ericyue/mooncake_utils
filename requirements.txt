@@ -1,0 +1,4 @@
+mmh3
+cityhash
+slacker
+python-gflags
