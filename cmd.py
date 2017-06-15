@@ -1,21 +1,29 @@
 from commands import *
 from subprocess import Popen, PIPE
+from termcolor import colored, cprint
 
 
 def run_cmd(cmd, debug = True):
   if debug:
     print ''
     print '--------- Running command ---------'
+
   print ' ==> Command [%s]' % cmd
   process = Popen(cmd,shell = True, stdout=PIPE, bufsize=1)
   with process.stdout:
       for line in iter(process.stdout.readline, b''): 
           print(line.strip())
+
   exit_code = process.wait() 
   core = bool(exit_code/ 256)
   signal_num = (exit_code << 8)  % 256
+
   if debug:
-    print ' ==> Exit: %d, Signal: %d, Core: %s' % (exit_code, signal_num, bool(exit_code / 256))
+    if exit_code != 0:
+      cprint( ' ==> Exit: %d, Signal: %d, Core: %s' % (exit_code, signal_num, bool(exit_code / 256)),
+                  "white", "on_red")
+    else:
+      print ' ==> Exit: %d, Signal: %d, Core: %s' % (exit_code, signal_num, bool(exit_code / 256))
     print '--------- Command End ---------'
     print ''
 
@@ -36,4 +44,5 @@ def run_cmd_noblock(cmd, debug = True):
   return status, text
 
 if __name__ == "__main__":
-  print run_cmd('exit 123')
+  run_cmd('exit 123')
+  run_cmd('exit 0')
