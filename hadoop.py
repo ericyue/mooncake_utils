@@ -95,15 +95,14 @@ class Hadoop:
       command = self.hadoop_bin_path+" " + self.streaming_jar 
       command += "  -D mapred.job.map.capacity=10000" +\
               "  -D mapred.job.reduce.capacity=10000"+\
-              "  -D mapred.min.split.size=1024000000"+ \
               "  -D mapred.job.priority="+ self.job_priority + \
               "  -D mapred.reduce.tasks="+self.reduce_num + \
               "  -D mapred.job.name=mooncake_"+self.job_name + \
-              "  -D mapreduce.reduce.memory.mb=3500" +\
-              "  -D mapreduce.map.memory.mb=3500" +\
-              "  -D mapreduce.reduce.java.opts=-Xmx3500M" +\
-              "  -D mapreduce.map.java.opts=-Xmx3500M" +\
-              "  -D mapred.child.java.opts=-Xmx3500m" +\
+              "  -D mapreduce.reduce.memory.mb=2000" +\
+              "  -D mapreduce.map.memory.mb=2000" +\
+              "  -D mapreduce.reduce.java.opts=-Xmx2000M" +\
+              "  -D mapreduce.map.java.opts=-Xmx2000M" +\
+              "  -D mapred.child.java.opts=-Xmx2000m" +\
               "  -D mapred.combine.input.format.local.only=false"+\
               "  -input " + input_path.strip() +\
               "  -output "+ self.output_path.strip() +\
