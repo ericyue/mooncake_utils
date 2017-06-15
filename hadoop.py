@@ -78,7 +78,7 @@ class Hadoop:
     self.logpath = self.homepath + "/log/"
     self.temppath = self.homepath + "/temp"
 
-  def run(self, input_path,get_result_to_local=True,need_alert=False,
+  def run(self, input_path, get_result_to_local=True, need_alert=False,
             getmerge=False):
 
       cprint('\n[hadoop job is preparing ...]', 'white', 'on_magenta')
@@ -127,13 +127,17 @@ class Hadoop:
           cprint( "[hadoop job : %s done]" % self.job_name,"white","on_green")
   
           if get_result_to_local:
+              cprint("begin hdfs result to local", "white", "on_green")
               os.system("mkdir -p ./output/%s" % self.run_date)
               if get_merge:
-                os.system("%s fs -getmerge  %s ./output/%s/%s" % (self.hadoop_bin_path,output_path,self.run_date,output_path.split("/")[-2]))
+                os.system("%s fs -getmerge  %s ./output/%s/%s" % (self.hadoop_bin_path, output_path, self.run_date, output_path.split("/")[-2]))
               else:
-                os.system("%s fs -get  %s ./output/%s/%s" % (self.hadoop_bin_path,output_path,self.run_date,output_path.split("/")[-2]))
+                os.system("%s fs -get  %s ./output/%s/%s" % (self.hadoop_bin_path, output_path, self.run_date, output_path.split("/")[-2]))
               local_path = "./output/%s/%s" % (self.run_date,output_path.split("/")[-2])
-              cprint("get hdfs result to local[%s]" % local_path,"white","on_green")
+              cprint("get hdfs result to local[%s]" % local_path, "white", "on_green")
+          else:
+              cprint("disable hdfs result to local", "white", "on_green")
+
       else:
         if need_alert:
           alert("hadoop job faild [%s]" % self.job_name,channel="#hadoop-job")
