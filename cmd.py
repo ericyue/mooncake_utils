@@ -1,6 +1,6 @@
 from commands import *
 
-def cmd(cmd):
+def run_cmd(cmd):
   print '--------- Running command: %s ---------' % cmd
   status, text = getstatusoutput(cmd)
   exit_code = status >> 8
@@ -11,4 +11,4 @@ def cmd(cmd):
   return status, text
 
 if __name__ == "__main__":
-  cmd('ls -alh')
+  run_cmd('ls -alh')
