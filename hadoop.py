@@ -8,6 +8,7 @@ from termcolor import colored, cprint
 import time
 from alert import *
 from mooncake_utils.date import *
+from mooncake_utils.cmd import run_cmd
 
 ABSPATH = os.path.dirname(os.path.abspath(sys.argv[0]))
 
@@ -128,11 +129,11 @@ class Hadoop:
   
           if get_result_to_local:
               cprint("begin hdfs result to local", "white", "on_green")
-              os.system("mkdir -p ./output/%s" % self.run_date)
+              run_cmd("mkdir -p ./output/%s" % self.run_date)
               if get_merge:
-                os.system("%s fs -getmerge  %s ./output/%s/%s" % (self.hadoop_bin_path, output_path, self.run_date, output_path.split("/")[-2]))
+                run_cmd("%s fs -getmerge  %s ./output/%s/%s" % (self.hadoop_bin_path, output_path, self.run_date, output_path.split("/")[-2]))
               else:
-                os.system("%s fs -get  %s ./output/%s/%s" % (self.hadoop_bin_path, output_path, self.run_date, output_path.split("/")[-2]))
+                run_cmd("%s fs -get  %s ./output/%s/%s" % (self.hadoop_bin_path, output_path, self.run_date, output_path.split("/")[-2]))
               local_path = "./output/%s/%s" % (self.run_date,output_path.split("/")[-2])
               cprint("get hdfs result to local[%s]" % local_path, "white", "on_green")
           else:
@@ -149,10 +150,10 @@ class Hadoop:
       cprint( "[begin hadoop job]","white","on_red")
       for i in range(self.hadoop_retry_times) :
           if opath != '':
-              ret = os.system( self.hadoop_bin_path + " fs -ls " + opath )
+              ret = run_cmd( self.hadoop_bin_path + " fs -ls " + opath )
               if ret == 0:
-                  os.system( self.hadoop_bin_path + ' fs -rmr ' + opath)
-          ret = os.system(command)
+                  run_cmd( self.hadoop_bin_path + ' fs -rmr ' + opath)
+          ret = run_cmd(command)
           if ret != 0 :
               time.sleep(self.hadoop_retry_interval)
           else:
@@ -162,12 +163,12 @@ class Hadoop:
   def copy_to_hadoop_retry(self,command, opath = ''):
       for i in range(self.hadoop_retry_times) :
           if opath != '':
-              ret = os.system( self.hadoop_bin_path + " fs -ls " + opath )
+              ret = run_cmd( self.hadoop_bin_path + " fs -ls " + opath )
               if ret == 0:
-                  os.system( self.hadoop_bin_path + ' fs -rm ' + opath + '/*')
+                  run_cmd( self.hadoop_bin_path + ' fs -rm ' + opath + '/*')
               else:
-                  os.system( self.hadoop_bin_path + ' fs -mkdir ' + opath )
-          ret = os.system(command)
+                  run_cmd( self.hadoop_bin_path + ' fs -mkdir ' + opath )
+          ret = run_cmd(command)
           if ret != 0 :
               orgtime.sleep(self.hadoop_retry_interval)
           else:
@@ -176,7 +177,7 @@ class Hadoop:
   
   def has_hadoop_dir(self,opath):
       if opath != '':
-          ret = os.system( self.hadoop_bin_path + " fs -ls " + opath )
+          ret = run_cmd( self.hadoop_bin_path + " fs -ls " + opath )
           if ret == 0:
               return True
           else:
@@ -184,7 +185,7 @@ class Hadoop:
       return False
   
   def has_hadoop_file(self,path,filename):
-      ret = os.system( self.conf.hadoop_bin_path + " fs -ls " + path + filename )
+      ret = run_cmd( self.conf.hadoop_bin_path + " fs -ls " + path + filename )
       if ret == 0:
           return True
       return False
@@ -193,19 +194,19 @@ class Hadoop:
       cprint( "[preparing local dirs]","white","on_red")
       cmd = "mkdir -p ./data ./log ./temp ./conf"
       print cmd
-      os.system(cmd)
+      run_cmd(cmd)
   
   def pack_upload(self):
       cprint( "[pack upload and put to hadoop]","white","on_red")
       cmd = "tar czf ./temp/"+self.tar_alias_name+" conf bin data *.py "
       print cmd
-      os.system(cmd)
+      run_cmd(cmd)
       cmd = "%s fs -rm %s" % (self.hadoop_bin_path,self.dfs_mapred_tar)
       print cmd
-      os.system(cmd)
+      run_cmd(cmd)
       cmd = "%s fs -put ./temp/%s %s " %(self.hadoop_bin_path,self.tar_alias_name, self.dfs_mapred_tar)
       print cmd
-      os.system(cmd)
+      run_cmd(cmd)
 
 if __name__ == "__main__":
   s = Hadoop()
