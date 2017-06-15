@@ -24,7 +24,7 @@ class Hadoop:
   run_date = None
 
   def __init__(self,run_date , conf_path = "./conf/hadoop.conf"):
-    cprint("begin init Hadoop using [%s]" % conf_path, 'red', 'on_yellow')
+    cprint("begin init Hadoop using [%s]" % conf_path)
     self.conf.read(conf_path)
     self.run_date = run_date
     self.load_conf()
@@ -86,11 +86,11 @@ class Hadoop:
       print ""
       self.prepare_local_dirs()
       self.pack_upload()
-      cprint("[input hdfs path]" ,'white', 'on_red')
+      cprint("[input hdfs path]")
       print input_path
-      cprint("[output hdfs path]",'white', 'on_red')
+      cprint("[output hdfs path")
       print self.output_path
-      cprint("[current job name]",'white', 'on_red')
+      cprint("[current job name]")
       print self.job_name
       
       command = self.hadoop_bin_path+" " + self.streaming_jar 
@@ -123,18 +123,24 @@ class Hadoop:
       except KeyboardInterrupt:
           cprint("KeyboardInterrupt","red","on_blue")
           ret = -1
-  
+
       if ret == 0:
           cprint( "[hadoop job : %s done]" % self.job_name,"white","on_green")
   
           if get_result_to_local:
               cprint("begin hdfs result to local", "white", "on_green")
               run_cmd("mkdir -p ./output/%s" % self.run_date)
-              if get_merge:
-                run_cmd("%s fs -getmerge  %s ./output/%s/%s" % (self.hadoop_bin_path, output_path, self.run_date, output_path.split("/")[-2]))
+              if getmerge:
+                run_cmd("%s fs -getmerge  %s ./output/%s/%s" % (self.hadoop_bin_path,
+                                  self.output_path,
+                                  self.run_date,
+                                  self.output_path.split("/")[-1]))
               else:
-                run_cmd("%s fs -get  %s ./output/%s/%s" % (self.hadoop_bin_path, output_path, self.run_date, output_path.split("/")[-2]))
-              local_path = "./output/%s/%s" % (self.run_date,output_path.split("/")[-2])
+                run_cmd("%s fs -get  %s ./output/%s/%s" % (self.hadoop_bin_path,
+                                  self.output_path,
+                                  self.run_date,
+                                  self.output_path.split("/")[-1]))
+              local_path = "./output/%s/%s" % (self.run_date,self.output_path.split("/")[-1])
               cprint("get hdfs result to local[%s]" % local_path, "white", "on_green")
           else:
               cprint("disable hdfs result to local", "white", "on_green")
@@ -147,7 +153,7 @@ class Hadoop:
       return ret
   
   def run_hadoop_retry(self, command, opath = ''):
-      cprint( "[begin hadoop job]","white","on_red")
+      cprint( "[begin hadoop job]")
       for i in range(self.hadoop_retry_times) :
           if opath != '':
               ret = run_cmd( self.hadoop_bin_path + " fs -ls " + opath )
@@ -191,13 +197,13 @@ class Hadoop:
       return False
   
   def prepare_local_dirs(self):
-      cprint( "[preparing local dirs]","white","on_red")
+      cprint( "[preparing local dirs]")
       cmd = "mkdir -p ./data ./log ./temp ./conf"
       print cmd
       run_cmd(cmd)
   
   def pack_upload(self):
-      cprint( "[pack upload and put to hadoop]","white","on_red")
+      cprint( "[pack upload and put to hadoop]")
       cmd = "tar czf ./temp/"+self.tar_alias_name+" conf bin data *.py "
       print cmd
       run_cmd(cmd)
@@ -211,4 +217,4 @@ class Hadoop:
 if __name__ == "__main__":
   s = Hadoop()
   print s.job_name
-  s.run()
+  #s.run()
