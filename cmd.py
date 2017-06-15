@@ -43,6 +43,15 @@ def run_cmd_noblock(cmd, debug = True):
     print ''
   return status, text
 
+def gen_cmd(base, params):
+  cmd = "%s " % base
+  for p in params:
+    cmd += "--%s=%s " % (p, params[p])
+
+  print cmd
+
 if __name__ == "__main__":
   run_cmd('exit 123')
   run_cmd('exit 0')
+  
+  gen_cmd('python', {'a':1,'b':'xxxxxx'})
