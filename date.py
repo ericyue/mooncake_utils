@@ -16,17 +16,19 @@ def datediff(dt, base = None, unit = 'day'):
 
   return diff
 
-def gen_date_list_by_days(begin = None, days=7, join = False):
+def gen_date_list_by_days(begin = None, days=7, join = False,  exclude = []):
   if not begin:
     begin = gen_today(delta=0, raw = True)
 
   if type(begin) != datetime.datetime:
     begin = parse(begin)
- 
+  
   ret = []
   for i in range(days):
     dt = begin - datetime.timedelta(i+1)
     dt = dt.strftime('%Y%m%d')
+    if dt in exclude:
+      continue
     ret.append(dt) 
 
   if join:
