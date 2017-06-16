@@ -61,3 +61,4 @@ if __name__ == "__main__":
   run_cmd('exit 0')
   
   gen_cmd('python', {'a':1,'b':'xxxxxx'})
+
