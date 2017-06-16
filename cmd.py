@@ -1,13 +1,19 @@
 from commands import *
 from subprocess import Popen, PIPE
 from termcolor import colored, cprint
+from mooncake_utils.log import get_logger
+
+logger = get_logger(
+                debug = True,
+                name = "mu.cmd",
+                with_file = False) 
 
 def run_cmd(cmd, debug = True):
   if debug:
-    print ''
-    print '--------- Running command ---------'
+    logger.debug('')
+    logger.debug('--------- Running command ---------')
 
-  print ' ==> Command [%s]' % cmd
+  logger.debug(' ==> Command [%s]' % cmd)
   process = Popen(cmd,shell = True, stdout=PIPE, bufsize=1)
   with process.stdout:
       for line in iter(process.stdout.readline, b''): 
@@ -22,9 +28,9 @@ def run_cmd(cmd, debug = True):
       cprint( ' ==> Exit: %d, Signal: %d, Core: %s' % (exit_code, signal_num, bool(exit_code / 256)),
                   "white", "on_red")
     else:
-      print ' ==> Exit: %d, Signal: %d, Core: %s' % (exit_code, signal_num, bool(exit_code / 256))
-    print '--------- Command End ---------'
-    print ''
+      logger.debug(' ==> Exit: %d, Signal: %d, Core: %s' % (exit_code, signal_num, bool(exit_code / 256)))
+    logger.debug('--------- Command End ---------')
+    logger.debug('')
 
   return exit_code
 
@@ -47,7 +53,7 @@ def gen_cmd(base, params):
   for p in params:
     cmd += "--%s=%s " % (p, params[p])
 
-  print cmd
+  logger.info(cmd)
   return cmd
 
 if __name__ == "__main__":

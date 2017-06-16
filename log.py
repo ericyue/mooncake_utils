@@ -11,7 +11,7 @@ def get_logger(
 
   if name == None or name == "":
     return None
-  formatter = logging.Formatter('%(asctime)s - %(levelname)s - <%(filename)s-%(funcName)s:%(lineno)d> : %(message)s')
+  formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - <%(filename)s-%(funcName)s:%(lineno)d> : %(message)s')
   if debug:
       level=logging.DEBUG
   else:
@@ -40,5 +40,5 @@ def get_logger(
 
 
 if __name__ == "__main__":
-  logger = get_logger(debug = True, "mooncake_utils") 
+  logger = get_logger(debug = True, name = "mooncake_utils") 
   logger.info("mooncake's a good guy!")
