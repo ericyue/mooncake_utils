@@ -2,7 +2,6 @@ from commands import *
 from subprocess import Popen, PIPE
 from termcolor import colored, cprint
 
-
 def run_cmd(cmd, debug = True):
   if debug:
     print ''

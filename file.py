@@ -17,4 +17,3 @@ def rm_folder(path, debug = False):
     if not debug:
       os.remove(one)
 
-
