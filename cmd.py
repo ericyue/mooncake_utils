@@ -49,6 +49,7 @@ def gen_cmd(base, params):
     cmd += "--%s=%s " % (p, params[p])
 
   print cmd
+  return cmd
 
 if __name__ == "__main__":
   run_cmd('exit 123')
