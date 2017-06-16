@@ -48,7 +48,7 @@ def run_cmd_noblock(cmd, debug = True):
     print ''
   return status, text
 
-def gen_cmd(base, params):
+def gen_cmd(base, params, pretty = False):
   cmd = "%s " % base
   for p in params:
     if type(params[p]) == bool:
@@ -59,7 +59,9 @@ def gen_cmd(base, params):
     else:
       cmd += "--%s=%s " % (p, params[p])
 
-  logger.info(cmd)
+    if pretty:
+      logger.info(cmd.strip().split(' ')[-1])
+
   return cmd
 
 class cmd_builder:
@@ -72,8 +74,15 @@ class cmd_builder:
     self.bin_base = bin_base
     logger.debug('init param_builder')
 
-  def put(self, p):
-    self.pool[p] = self.conf[p]
+  def use_all_conf(self):
+    self.pool = self.conf
+
+  def put(self, p, value = None):
+    if not value:
+      self.pool[p] = self.conf[p]
+    else:
+      self.pool[p] = value
+
     logger.debug('put [%s:%s]' % (p, self.conf[p]))
 
   def build(self):
@@ -84,7 +93,7 @@ class cmd_builder:
 if __name__ == "__main__":
   run_cmd('exit 123')
   run_cmd('exit 0')
-  gen_cmd('python', {'a':1, 'b':'xxxxxx', 'c':True, 'd':False})
+  gen_cmd('python', {'a':1, 'b':'xxxxxx', 'c':True, 'd':False}, pretty= True)
   c = {'a':1, 'b':'xxxxxx', 'c':True, 'd':False}
   cb = cmd_builder('test.py', c)
   cb.put('a')
