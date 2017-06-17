@@ -6,17 +6,20 @@ from cityhash import CityHash32 as city_hash
 
 logger = get_logger(name="fea")
 
-class feature_hasher():
+class FeatureHasher():
   def __init__(self,
           size=1000, hash_module="city",
           debug=False, print_collision=False,
           dense = False, use_col_index = False):
+
     self.size = size
     self.debug = debug
     self._collision = {}
     self.print_collision = print_collision
     self.dense = dense
     self.use_col_index = use_col_index
+
+    self.__init_variable()
 
     if hash_module == "mmh3":
       self._hashlib = mmh3_hash
@@ -25,7 +28,10 @@ class feature_hasher():
     else:
       raise Exception("unknown hash function")
 
-  def __hash__(self, obj):
+  def __init_variable(self):
+    self.__counter = 0
+
+  def __hash(self, obj):
     ret = abs(self._hashlib(obj)) % self.size
     if self.print_collision:
       if ret not in self._collision:
@@ -42,13 +48,15 @@ class feature_hasher():
       if len(self._collision[key]) >1:
         cnt+=1
 
-    logger.info("collision[%s] total[%s] rate[%.4f%%]" % (cnt,len(self._collision), 100*cnt/len(self._collision)))
+    logger.info("collision[%s] total[%s] rate[%.4f%%]" % (cnt,
+                    len(self._collision), 100*cnt/len(self._collision)))
 
   def string_hash(self, key, value):
     h_key = key+value
-    hash_value = self.__hash__(h_key)
+    hash_value = self.__hash(h_key)
     if self.debug:
-      logger.debug("  string_hash   ->key[%s] value[%s] / h_key[%s]->[%s] h_value[%s]->[%s]" % (key, value,h_key,hash_value,value,1))
+      logger.debug("->key[%s] value[%s] / h_key[%s]->[%s] h_value[%s]->[%s]" % (
+                    key, value,h_key,hash_value,value,1))
 
     if self.dense:
       return hash_value, hash_value
@@ -59,10 +67,9 @@ class feature_hasher():
     if self.dense:
       hash_key = key
     else:
-
-      hash_key = self.__hash__(str(key))
+      hash_key = self.__hash(str(key))
     if self.debug:
-      logger.debug("  number_hash   ->key[%s] value[%s] / h_key[%s]->[%s] h_value[%s]->[%s]" % (
+      logger.debug("->key[%s] value[%s] / h_key[%s]->[%s] h_value[%s]->[%s]" % (
                     key, value, key, hash_key, value, value))
     return hash_key, value
 
@@ -90,14 +97,16 @@ class feature_hasher():
     ret[h_key] = h_val
 
   def list_hash(self, key, obj, ret):
-    cnt = 0
     for item in obj:
-      self.single_hash("%s_%s" % (cnt,key), item, ret, cnt)
-      cnt+=1
+      self.single_hash("%s_%s" % (self.__counter, key), 
+                          item, ret, self.__counter)
+      self.__counter += 1
 
   def hash(self, obj):
     if self.debug:
-      logger.debug("input", obj)
+      logger.debug(obj)
+    
+    self.__init_variable()
 
     ret = {}
     label = None
@@ -105,10 +114,10 @@ class feature_hasher():
       if not self.check_valid(u):
         continue
 
-      if u == "__label__" :
+      if u == "__label__":
         label = obj[u]
         continue
-      if type(obj[u]) in [list,tuple]:
+      if type(obj[u]) in [list, tuple]:
         self.list_hash(u, obj[u], ret)
       else:
         self.single_hash(u, obj[u], ret, 0)
@@ -119,7 +128,7 @@ class feature_hasher():
       msg = self.format(label, ret)
 
     if self.debug:
-      logger.debug("output %s\n" % msg)
+      logger.debug("%s" % msg)
     return msg
 
   def dense_format(self, label, obj):
@@ -151,9 +160,11 @@ if __name__ == "__main__":
 
   h1={"__label__":1,"id":"394848222","vec":[123.2,112.3,44.4]}
   h2= {'w2v': [0.007911, -0.093373, -0.15307, -0.024283, -0.044193, 0.160349, -0.024016, 0.007423, 0.149864, 0.135744, 0.016073, 0.045109, -0.011489, -0.105786, 0.097938, -0.091035, 0.170713, 0.086309, -0.019482, -0.05405, -0.193355, -0.106077, -0.065943, 0.091179, 0.133637, -0.038045, 0.125531, 0.163907, -0.087991, 0.088282, 0.185405, -0.042518, -0.005262, 0.038919, 0.011682, 0.041738, -0.150831, 0.060612, 0.165593, -0.113252, 0.021496, -0.0505, 0.049408, -0.149098, -0.106122, 0.162164, 0.174148, 0.081231, -0.013936, -0.14077], 'uid': '66652331', 'zhuboid': '92677035', '__label__': 0}
+
   h4={'w2v': [-0.289897, -0.280452, -0.089623, 0.383446, -0.143555, -0.197646, -0.259489, -0.246846, -0.00203, 0.199725, 0.242156, -0.099511, 0.165036, 0.0781, 0.353059, 0.067087, -0.013154, -0.414995, -0.049902, -0.175679], 'user_w2v': [-0.006176, -0.016736, -0.001631, -0.144528, 0.137523, 0.022742, -0.105139, -0.088976, 0.030469, 0.197202, 0.306016, -0.102512, -0.009773, -0.03308, 0.079476, -0.195709, 0.021524, -0.177388, 0.052616, 0.14131], '__label__': 0}
 
-  f = feature_hasher(size=100000000,hash_module="city",print_collision=True, debug=True, dense=False,use_col_index =True)
+  f = FeatureHasher(size=100000000, hash_module="city", 
+              print_collision=True, debug=True, dense=False,use_col_index =True)
   f.hash(a)
   f.hash(b)
   f.hash(c)
@@ -163,3 +174,4 @@ if __name__ == "__main__":
   f.hash(h2)
   f.collision()
   f.hash(h4)
+
