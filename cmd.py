@@ -67,11 +67,13 @@ def gen_cmd(base, params, pretty = False):
 class cmd_builder:
   pool = {}
   conf = None
+  pretty = False
   bin_base = None
 
-  def __init__(self, bin_base, conf):
+  def __init__(self, bin_base, conf, pretty = False):
     self.conf = conf
     self.bin_base = bin_base
+    self.pretty = pretty
     logger.debug('init param_builder')
 
   def use_all_conf(self):
@@ -85,8 +87,11 @@ class cmd_builder:
 
     logger.debug('put [%s:%s]' % (p, self.conf[p]))
 
+  def get(self, p):
+    return self.pool[p]
+
   def build(self):
-    cmd = gen_cmd(self.bin_base, self.pool)
+    cmd = gen_cmd(self.bin_base, self.pool, self.pretty)
     logger.info('build result [%s]' % cmd)
     return cmd
 

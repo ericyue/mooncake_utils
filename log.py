@@ -6,8 +6,8 @@ logbase = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+"/log/"
 
 def get_logger(
           debug = True, 
-          name = "mooncake_utils",
-          with_file = True):
+          name = "mu.log",
+          with_file = False):
 
   if name == None or name == "":
     return None
