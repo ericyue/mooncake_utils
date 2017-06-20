@@ -26,7 +26,6 @@ def get_logger(debug = True, name = "mooncake_utils"):
   logger.info("init logger success {}".format(name))
   return logger
 
-
 if __name__ == "__main__":
   logger = get_logger(DEBUG, "mooncake_utils logger")
 	logger.info("mooncake's a good guy!")
