@@ -48,6 +48,10 @@ def run_cmd_noblock(cmd, debug = True):
     print ''
   return status, text
 
+def md5(path):
+  cmd = 'md5sum  {0} > {0}.md5'.format(path)
+  run_cmd(cmd)
+
 def gen_cmd(base, params, pretty = False):
   cmd = "%s " % base
   for p in params:

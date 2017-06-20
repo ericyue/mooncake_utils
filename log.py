@@ -2,7 +2,7 @@ import logging
 from mooncake_utils.file import mkdirp
 import os,sys
 from logging.handlers import TimedRotatingFileHandler,RotatingFileHandler
-logbase = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+"/log/"
+logbase = os.path.dirname(os.path.abspath(sys.argv[0])) + '/log/'
 
 def get_logger(
           debug = True, 
@@ -26,7 +26,7 @@ def get_logger(
   
   if with_file:
     mkdirp(logbase)
-    log_file = logbase+"%s.log" % name
+    log_file = logbase + "%s.log" % name
     file_handler = TimedRotatingFileHandler(
                         log_file,
                         "midnight", 1, 30,
@@ -38,7 +38,6 @@ def get_logger(
   logger.info("init logger success [{}]".format(name))
   return logger
 
-
 if __name__ == "__main__":
-  logger = get_logger(debug = True, name = "mooncake_utils") 
+  logger = get_logger(debug = True, name = "mooncake_utils")
   logger.info("mooncake's a good guy!")
