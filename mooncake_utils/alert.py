@@ -20,8 +20,11 @@ def alert(msg, mail = True, slack = True, channel="#mooncake"):
 
     Args:
        msg (str):  报警内容
+
        mail (bool):  是否发送邮件
+
        slack (bool):  是否发送Slack
+
        channel (str):  Slack的接收频道
 
     Returns:
@@ -42,14 +45,14 @@ def alert(msg, mail = True, slack = True, channel="#mooncake"):
     return ret
 
 def send_slack(msg, channel="#mooncake"):
-  """This function does something.
+  """Send Message to Slack
 
-  :param name: The name to use. 
-  :type name: str. 
-  :param state: Current state to be in. 
-  :type state: bool. 
-  :returns: int -- the return code. 
-  :raises: AttributeError, KeyError
+  :param msg: 报警内容. 
+  :type msg: str. 
+  :param channel: 接收报警的频道. 
+  :type channel: str. 
+  :returns: bool -- the return code. 
+  :raises: AttributeError, NetworkError
 
   """ 
   attempt = 0
