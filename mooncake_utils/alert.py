@@ -11,11 +11,11 @@ conf = ConfigParser.ConfigParser({})
 conf.read("%s/conf/alert.conf" % base)
 channel = conf.get("slack","channel")
 token = conf.get("slack","token")
-
 slack = Slacker(token)
 
 def alert(msg, mail = True, slack = True, channel="#mooncake"):
-    """This function does something.
+    """
+    This function does something.
 
       Args:
          msg (str):  报警内容

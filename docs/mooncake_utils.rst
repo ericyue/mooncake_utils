@@ -1,16 +1,8 @@
 
-报警模块
----------------------------
+日期处理
+--------------------------
 
-.. automodule:: mooncake_utils.alert
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-命令行相关
--------------------------
-
-.. automodule:: mooncake_utils.cmd
+.. automodule:: mooncake_utils.date
     :members:
     :undoc-members:
     :show-inheritance:
@@ -31,13 +23,6 @@ Cython编译辅助
     :undoc-members:
     :show-inheritance:
 
-日期处理
---------------------------
-
-.. automodule:: mooncake_utils.date
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 特征抽取
 -----------------------------
@@ -79,3 +64,18 @@ Hadoop相关
     :undoc-members:
     :show-inheritance:
 
+报警模块
+---------------------------
+
+.. automodule:: mooncake_utils.alert
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+命令行相关
+-------------------------
+
+.. automodule:: mooncake_utils.cmd
+    :members:
+    :undoc-members:
+    :show-inheritance:
