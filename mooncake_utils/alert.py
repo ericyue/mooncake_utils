@@ -1,4 +1,3 @@
-#!/usr/bin/python
 #encoding: utf-8
 import os,sys
 reload(sys)
@@ -18,20 +17,20 @@ slack = Slacker(token)
 def alert(msg, mail = True, slack = True, channel="#mooncake"):
     """This function does something.
 
-    Args:
-       msg (str):  报警内容
-
-       mail (bool):  是否发送邮件
-
-       slack (bool):  是否发送Slack
-
-       channel (str):  Slack的接收频道
-
-    Returns:
-       bool.  The return code::
-
-    Raises:
-       NetworkError
+      Args:
+         msg (str):  报警内容
+  
+         mail (bool):  是否发送邮件
+  
+         slack (bool):  是否发送Slack
+  
+         channel (str):  Slack的接收频道
+  
+      Returns:
+         bool.  The return code::
+  
+      Raises:
+         NetworkError
 
     """
 
