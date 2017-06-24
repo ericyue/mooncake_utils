@@ -15,9 +15,8 @@ mooncake_utils 源于作者平时工作积累的一些库和函数，本意仅�
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
-
    mooncake_utils
+
 
 Indices and tables
 ==================
@@ -27,10 +26,3 @@ Indices and tables
 * :ref:`search`
 
 
-Module contents
----------------
-
-.. automodule:: mooncake_utils
-    :members:
-    :undoc-members:
-    :show-inheritance:
