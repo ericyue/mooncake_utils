@@ -1,5 +1,5 @@
 mmh3
-cython>=0.25.2
+Cython>=0.25.2
 cityhash
 slacker
 python-gflags
