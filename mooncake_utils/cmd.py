@@ -12,18 +12,19 @@ logger = get_logger(
                 name = "mu.cmd",
                 with_file = False) 
 
-def run_cmd(cmd, debug = True):
+def run_cmd(cmd, debug = False):
   """
     运行一个shell命令，并且打印结果。
     注意，这里是阻塞运行。
 
     :param cmd: 需要执行的命令 如 ``ls -alh`` 
+    :param debug: 如果设置True则不执行cmd，仅打印相关日志
   """
-  if debug:
-    logger.debug('')
-    logger.debug('--------- Running command ---------')
-
+  logger.debug('--------- Running command ---------')
   logger.debug(' ==> Command [%s]' % cmd)
+  if debug:
+    return 0
+
   process = Popen(cmd,shell = True, stdout=PIPE, bufsize=1)
   with process.stdout:
       for line in iter(process.stdout.readline, b''): 
@@ -33,32 +34,44 @@ def run_cmd(cmd, debug = True):
   core = bool(exit_code/ 256)
   signal_num = (exit_code << 8)  % 256
 
-  if debug:
-    if exit_code != 0:
-      cprint( ' ==> Exit: %d, Signal: %d, Core: %s' % (exit_code, signal_num, bool(exit_code / 256)),
-                  "white", "on_red")
-    else:
-      logger.debug(' ==> Exit: %d, Signal: %d, Core: %s' % (exit_code, signal_num, bool(exit_code / 256)))
-    logger.debug('--------- Command End ---------')
-    logger.debug('')
+  if exit_code != 0:
+    cprint( ' ==> Exit: %d, Signal: %d, Core: %s' % (exit_code, signal_num, bool(exit_code / 256)),
+                "white", "on_red")
+  else:
+    logger.debug(' ==> Exit: %d, Signal: %d, Core: %s' % (exit_code, signal_num, bool(exit_code / 256)))
+  logger.debug('--------- Command End ---------')
 
   return exit_code
 
-def run_cmd_noblock(cmd, debug = True):
+def run_cmd_noblock(cmd, debug = False):
+  """
+    作用同 ``run_cmd``, 不过这里是非阻塞的。
+    
+    :param cmd: 需要执行的命令 如 ``ls -alh`` 
+    :param debug: 如果设置True则不执行cmd，仅打印相关日志
+
+  """
+  logger.info(' ==> Command No-Block [%s]' % cmd)
   if debug:
-    print '--------- Running command ---------'
-  print ' ==> Command [%s]' % cmd
+    return 0
   status, text = getstatusoutput(cmd)
   exit_code = status >> 8
   signal_num = status % 256
-  if debug:
-    print ' ==> Exit: %d, Signal: %d, Core: %s' % (exit_code, signal_num, bool(exit_code / 256))
-    print ' ==> Output:\n%s' % text
-    print '--------- Command End ---------'
-    print ''
+  
+  logger.info(' ==> Exit: %d, Signal: %d, Core: %s' % (exit_code, signal_num, bool(exit_code / 256)))
+  logger.info(text) 
   return status, text
 
+
 def md5(path):
+  """
+    为文件生成相应的md5sum。
+    
+    :param path: 需要生成md5的路径，如 ``./output/final.dat``
+
+    执行成功后产出 ``./output/final.dat.md5``
+
+  """
   cmd = 'md5sum  {0} > {0}.md5'.format(path)
   run_cmd(cmd)
 
