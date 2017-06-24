@@ -9,7 +9,7 @@ Welcome to mooncake utils's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-                modules.rst
+     mooncake_utils
 
 
 
