@@ -19,36 +19,27 @@ def alert(msg, mail = True, slack = True, channel="#mooncake"):
     """This function does something.
 
     Args:
-       name (str):  The name to use.
-
-    Kwargs:
-       state (bool): Current state to be in.
+       msg (str):  报警内容
+       mail (bool):  是否发送邮件
+       slack (bool):  是否发送Slack
+       channel (str):  Slack的接收频道
 
     Returns:
-       int.  The return code::
-
-          0 -- Success!
-          1 -- No good.
-          2 -- Try again.
+       bool.  The return code::
 
     Raises:
-       AttributeError, KeyError
-
-    A really great idea.  A way you might use me is
-
-    >>> print public_fn_with_googley_docstring(name='foo', state=None)
-    0
-
-    BTW, this always returns 0.  **NEVER** use with :class:`MyPublicClass`.
+       NetworkError
 
     """
 
     print msg
     try:
-      send_slack(msg, channel)
+      ret = send_slack(msg, channel)
     except Exception, w:
       print w
       pass
+
+    return ret
 
 def send_slack(msg, channel="#mooncake"):
   """This function does something.
@@ -65,10 +56,11 @@ def send_slack(msg, channel="#mooncake"):
   while attempt < 3:
     try:
       slack.chat.post_message(channel, msg)
-      break
+      return True
     except Exception,w:
       print "retry#%s send slack due to [%s]" %(attempt,w)
       attempt+=1
+  return False 
 
 if __name__ == "__main__":
   pass
