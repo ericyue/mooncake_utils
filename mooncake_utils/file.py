@@ -7,10 +7,22 @@ import glob
 import shutil
 
 def mkdirp(directory):
+  """
+    利用python库来做到shell中的 ``mkdir -p``
+
+    好处是不用 ``os.system()``，避免了fork进程造成的资源浪费。
+
+    :param directory: 路径
+  """
   if not os.path.isdir(directory):
     os.makedirs(directory)
 
 def rm_folder(path, debug = False):
+  """
+    清空文件夹
+  
+    :param debug: 若为True，则只打印日志，不执行删除操作。
+  """
   files = glob.glob(path)
   for one in files:
     print "removing [%s]", one

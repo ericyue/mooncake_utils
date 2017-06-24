@@ -7,10 +7,23 @@ from cityhash import CityHash32 as city_hash
 logger = get_logger(name="fea")
 
 class FeatureHasher():
+  """
+    一个简易的特征抽框架
+
+  """
   def __init__(self,
           size=1000, hash_module="city",
           debug=False, print_collision=False,
           dense = False, use_col_index = False):
+    """
+      初始化特征类
+      :param size: 特征总维度，也就是哈希桶的数目.
+      :param hash_module: 采用的哈希库，可选 ``city``,``mmh3``
+      :param debug: 打印debug信息
+      :param print_collision: 是否打印冲突率
+      :param dense: 是否生成稠密结果
+      :param use_col_index: 特征采用下标还是用哈希结果
+    """
 
     self.size = size
     self.debug = debug
