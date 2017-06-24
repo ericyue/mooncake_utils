@@ -1,3 +1,7 @@
+# -*- coding:utf-8 -*-
+
+# @author Yue Bin ( hi.moonlight@gmail.com )
+# @date 2017-06-07
 from __future__ import print_function
 import os,sys
 from mmh3 import hash as mmh3_hash
