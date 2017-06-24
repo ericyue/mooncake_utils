@@ -128,6 +128,7 @@ def datetime2timestamp(date):
 def str2date(date):
   """
     str解析成datetime, 会尝试各种格式解析
+
     >>> str2date('20170101')
     <type 'datetime.datetime'>
 
@@ -140,35 +141,78 @@ def str2date(date):
   return parse(date)
 
 def str2datetime(date, date_format='%Y-%m-%d %H:%M:%S'):
+  """
+    固定格式的str转datetime
+  """
   return datetime.datetime.strptime(date, date_format)
 
 def timestamp2datetime(timestamp):
+  """
+    时间戳转datetime
+    
+    :param timestamp: str or int or float
+    :returns: 返回datetime
+  """
   if type(timestamp) == str:
     timestamp = int(float(timestamp))
   x = time.localtime(timestamp)
   return str2date(time.strftime('%Y-%m-%d %H:%M:%S',x))
 
 def gen_today(delta = 1, raw = False, short = True, with_time = False, only_time = False):
+  """
+    生成当天的日期
+    
+    :param delta: 时间偏移量
+    :param raw: 如果设置为``True``,返回``datetime``类型, 否则返回``str``类型
+    :param short: 若为True, 会返回精简时间，如20170101，否则返回2017-01-01
+    :param with_time: 是否添加时间，否则只返回日期
+    :param only_time: 是否只返回时间，不加日期
+
+    >>> gen_today(delta=0, with_time=True)
+    20170624145222
+    >>> gen_today(delta=0, with_time=True, short=False)
+    2017-06-24 15:06:12
+    >>> gen_today(delta=0, only_time=True, short=False)
+    15:06:12
+    >>> gen_today(delta=0, only_time=True)
+    150612
+    >>> gen_today(delta=0, with_time=False)
+    20170624
+    >>> gen_today(delta=1, with_time=False)
+    20170623
+
+  """
+
   dt = datetime.datetime.now()-datetime.timedelta(delta)
   if raw:
     return dt
 
   if short:
-    str_dt = dt.strftime('%Y%m%d%H%M%S')
-  if only_time:
-    str_dt = str_dt[8:]
-    return str_dt
+    if only_time:
+      str_dt = dt.strftime('%H%M%S')
+    else:
+      if not with_time:
+        str_dt = dt.strftime('%Y%m%d')
+      else:
+        str_dt = dt.strftime('%Y%m%d%H%M%S')
 
-  if not with_time:
-    str_dt = str_dt[:8]
+  else:
+    if only_time:
+      str_dt = dt.strftime('%H:%M:%S')
+    else:
+      if not with_time:
+        str_dt = dt.strftime('%Y-%m-%d')
+      else:
+        str_dt = dt.strftime('%Y-%m-%d %H:%M:%S')
+
   return str_dt
 
 def int2datestr(date, diff):
   if date == None:
-      sec = time.time()
+    sec = time.time()
   else:
-      sd = time.strptime(date,'%Y%m%d')
-      sec = time.mktime(sd)
+    sd = time.strptime(date,'%Y%m%d')
+    sec = time.mktime(sd)
   sec = sec - 86400 * diff  # 1 day is 86400 second
   ltime = time.localtime(sec)
   return time.strftime('%Y%m%d',ltime)
@@ -179,11 +223,11 @@ if __name__ == "__main__":
   #print datetime2timestamp(datetime.datetime.now())
   #print str2datetime('2017-04-03 01:11:11')
   #print timestamp2datetime(1496820643)
-  #print get_today(with_time=False, delta=10)
   #print gen_date_list_by_days(begin ='20170620', days=3, exclude=['20170618'])
-  print type(str2date('20170101'))
-  exit()
-  print gen_today(delta=0,with_time=True)
+  #print type(str2date('20170101'))
+  #print gen_today(delta=0,with_time=True,short=False)
   print gen_today(only_time=True)
+  #print gen_today(delta=0, only_time=True, with_time=True)
+  exit()
   print gen_date_list(begin='20170301',end='20170303', exclude=['20170204'])
   print gen_date_list(begin='20170301',end=None, exclude=['20170204'],exclude_today=False)
