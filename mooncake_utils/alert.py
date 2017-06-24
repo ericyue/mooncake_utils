@@ -19,7 +19,13 @@ alert module
 
 def alert(msg, mail = True, slack = True, channel="#mooncake"):
     """
-    This function does something.
+    用来发送报警,支持邮件和Slack
+
+    :param msg: 报警内容
+    :param mail: 是否开启邮件报警
+    :param slack: 是否开启slack报警
+    :param channel: slack报警的接收频道
+
     """
 
     print msg

@@ -1,3 +1,7 @@
+# -*- coding:utf-8 -*-
+
+# @author Yue Bin ( hi.moonlight@gmail.com )
+# @date 2017-06-07
 from commands import *
 from subprocess import Popen, PIPE
 from termcolor import colored, cprint
@@ -9,6 +13,12 @@ logger = get_logger(
                 with_file = False) 
 
 def run_cmd(cmd, debug = True):
+  """
+    运行一个shell命令，并且打印结果。
+    注意，这里是阻塞运行。
+
+    :param cmd: 需要执行的命令 如 ``ls -alh`` 
+  """
   if debug:
     logger.debug('')
     logger.debug('--------- Running command ---------')

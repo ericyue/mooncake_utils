@@ -10,18 +10,24 @@ def datediff(dt, base = None, unit = 'day'):
   """
     用来计算分两个datetime的相差天数或者分钟数。
 
-    if base == None, base = datetime.now()
-
-    目前unit仅支持day
+    如果不显示的指定base，则计算与当前时间的diff
     
     :param dt: input date
     :param base: 基准日期
-    :param unit: 计算粒度，默认返回diff天数
+    :param unit: 计算粒度,可选的有 ``day``, ``hour`` , ``minute`` , ``second`` 
   """
   if not base:
     base = datetime.datetime.now()
+
+  delta = base - dt
   if unit == "day":
-    diff = (base - dt).days
+    diff = delta.days
+  elif unit == "hour":
+    diff = delta.seconds//3600
+  elif unit == "minute":
+    diff = (delta.seconds//60)%60
+  elif unit == "second":
+    diff = delta.seconds
   else:
     diff = None
 
