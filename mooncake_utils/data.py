@@ -6,12 +6,21 @@ import os,sys
 import mmap
 
 def read_mmap(fn):
+  """read_mmap
+
+  :param fn:
+  """
   with open(fn, "r+b") as f:
     map = mmap.mmap(f.fileno(), 0, prot=mmap.PROT_READ)
     for line in iter(map.readline, ""):
       yield line.rstrip('\n')
 
 def trunc(f, n = 4):
+  """trunc
+
+  :param f:
+  :param n:
+  """
   s = '{}'.format(f)
   if 'e' in s or 'E' in s:
       return float('{0:.{1}f}'.format(f, n))
@@ -20,6 +29,11 @@ def trunc(f, n = 4):
   return float(ret)
 
 def parse_int(m, default = 0):
+  """parse_int
+
+  :param m:
+  :param default:
+  """
   if type(m) == int:
     return m
   elif type(m) == str:
@@ -31,6 +45,11 @@ def parse_int(m, default = 0):
     raise Exception('error input %s, cannot parse' % m)
 
 def parse_float(m, default = 0.0):
+  """parse_float
+
+  :param m:
+  :param default:
+  """
   if type(m) == int:
     return m
   elif type(m) == str:

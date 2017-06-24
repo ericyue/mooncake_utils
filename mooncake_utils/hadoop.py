@@ -20,6 +20,8 @@ def gen_input_date(per_day, days=10):
   return ret
 
 class Hadoop:
+  """Hadoop-Streaming"""
+
   conf = ConfigParser.ConfigParser({})
   run_date = None
 

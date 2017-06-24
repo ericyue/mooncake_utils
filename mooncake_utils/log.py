@@ -8,6 +8,12 @@ def get_logger(
           debug = True, 
           name = "mu.log",
           with_file = False):
+  """get_logger
+
+  :param debug:
+  :param name:
+  :param with_file:
+  """
 
   if name == None or name == "":
     return None
