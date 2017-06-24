@@ -8,13 +8,14 @@ from dateutil.parser import parse
 
 def datediff(dt, base = None, unit = 'day'):
   """
-    用来计算分两个datetime的相差天数或者分钟数
+    用来计算分两个datetime的相差天数或者分钟数。
+    if base == None, base = datetime.now()
+
+    目前unit仅支持day
     
-    Parameters
-    ----------
-    dt: input date
-    base: 基准日期
-    unit: 计算粒度，默认返回diff天数
+    :param dt: input date
+    :param base: 基准日期
+    :param unit: 计算粒度，默认返回diff天数
   """
   if not base:
     base = datetime.datetime.now()
