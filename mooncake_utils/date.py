@@ -30,6 +30,7 @@ def datediff(dt, base = None, unit = 'day'):
 def gen_date_list_by_days(begin = None, days=7, join = False,  exclude = []):
   """
     生成指定的时间list
+
     :param begin: 起始日期，默认要求datetime类型，如果是str会自动尝试解析成datetime
     :param days: 生成距离begin的最近几天
     :param join: 是否将list按照,拼接。hadoop的input目录常用
@@ -68,6 +69,10 @@ def gen_date_list_by_days(begin = None, days=7, join = False,  exclude = []):
 
 
 def gen_date_list(begin, end, join = False, exclude = [], exclude_today = True):
+  """
+    生成指定起始到结束之内的日期列表，注意同gen_date_list_by_days对比。
+
+  """
   if end == None:
     end = datetime.datetime.now()
   if type(begin) != datetime.datetime:
@@ -100,6 +105,9 @@ def gen_date_list(begin, end, join = False, exclude = [], exclude_today = True):
   return ret
 
 def gen_latest_date_list(begin, end, join = False, exclude = []):
+  """
+    已废弃，请用gen_date_list 
+  """
   ret = []
   for i in range(begin+1, end):
       dt = datetime.datetime.now() - datetime.timedelta(days=(i))
@@ -112,9 +120,23 @@ def gen_latest_date_list(begin, end, join = False, exclude = []):
   return ret
 
 def datetime2timestamp(date):
+  """
+    datetime格式转时间戳(int)
+  """
   return int(time.mktime(date.timetuple()))
 
 def str2date(date):
+  """
+    str解析成datetime, 会尝试各种格式解析
+    >>> str2date('20170101')
+    <type 'datetime.datetime'>
+
+    >>> str2date('2017-01-01')
+    <type 'datetime.datetime'>
+
+    >>> str2date('2017-01-01 11:11:22')
+    <type 'datetime.datetime'>
+  """
   return parse(date)
 
 def str2datetime(date, date_format='%Y-%m-%d %H:%M:%S'):
@@ -158,7 +180,8 @@ if __name__ == "__main__":
   #print str2datetime('2017-04-03 01:11:11')
   #print timestamp2datetime(1496820643)
   #print get_today(with_time=False, delta=10)
-  print gen_date_list_by_days(begin ='20170620', days=3, exclude=['20170618'])
+  #print gen_date_list_by_days(begin ='20170620', days=3, exclude=['20170618'])
+  print type(str2date('20170101'))
   exit()
   print gen_today(delta=0,with_time=True)
   print gen_today(only_time=True)
