@@ -28,7 +28,7 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-#
+
 # needs_sphinx = '1.0'
 
 # Add any Sphinx extension module names here, as strings. They can be
