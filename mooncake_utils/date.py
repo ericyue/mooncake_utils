@@ -9,6 +9,7 @@ from dateutil.parser import parse
 def datediff(dt, base = None, unit = 'day'):
   """
     用来计算分两个datetime的相差天数或者分钟数。
+
     if base == None, base = datetime.now()
 
     目前unit仅支持day
@@ -27,6 +28,21 @@ def datediff(dt, base = None, unit = 'day'):
   return diff
 
 def gen_date_list_by_days(begin = None, days=7, join = False,  exclude = []):
+  """
+    生成指定的时间list
+    
+    >>> gen_date_list_by_days(begin ='20170620', days=3) # 今天2017-6-24
+    ['20170619', '20170618', '20170617']
+    
+    >>> gen_date_list_by_days(begin ='20170620', days=3, exclude=['20170618']) # 今天2017-6-24
+    ['20170619', '20170617']
+
+    >>> gen_date_list_by_days(days=3) # 今天2017-6-24
+    ['20170623', '20170622', '20170621']
+
+    >>> gen_date_list_by_days(days=3, join = True) # 今天2017-6-24
+    '20170623,20170622,20170621'
+  """
   if not begin:
     begin = gen_today(delta=0, raw = True)
 
@@ -45,6 +61,7 @@ def gen_date_list_by_days(begin = None, days=7, join = False,  exclude = []):
     ret = ",".join(ret)
 
   return ret
+
 
 def gen_date_list(begin, end, join = False, exclude = [], exclude_today = True):
   if end == None:
@@ -137,6 +154,8 @@ if __name__ == "__main__":
   #print str2datetime('2017-04-03 01:11:11')
   #print timestamp2datetime(1496820643)
   #print get_today(with_time=False, delta=10)
+  print gen_date_list_by_days(begin ='20170620', days=3, exclude=['20170618'])
+  exit()
   print gen_today(delta=0,with_time=True)
   print gen_today(only_time=True)
   print gen_date_list(begin='20170301',end='20170303', exclude=['20170204'])
