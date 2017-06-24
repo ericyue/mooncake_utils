@@ -1,10 +1,5 @@
-mooncake_utils package
-======================
 
-Submodules
-----------
-
-mooncake_utils.alert module
+报警模块
 ---------------------------
 
 .. automodule:: mooncake_utils.alert
@@ -12,7 +7,7 @@ mooncake_utils.alert module
     :undoc-members:
     :show-inheritance:
 
-mooncake_utils.cmd module
+命令行相关
 -------------------------
 
 .. automodule:: mooncake_utils.cmd
@@ -20,7 +15,7 @@ mooncake_utils.cmd module
     :undoc-members:
     :show-inheritance:
 
-mooncake_utils.cython_build module
+Cython编译辅助
 ----------------------------------
 
 .. automodule:: mooncake_utils.cython_build
@@ -28,7 +23,7 @@ mooncake_utils.cython_build module
     :undoc-members:
     :show-inheritance:
 
-mooncake_utils.data module
+数据处理
 --------------------------
 
 .. automodule:: mooncake_utils.data
@@ -36,7 +31,7 @@ mooncake_utils.data module
     :undoc-members:
     :show-inheritance:
 
-mooncake_utils.date module
+日期处理
 --------------------------
 
 .. automodule:: mooncake_utils.date
@@ -44,7 +39,7 @@ mooncake_utils.date module
     :undoc-members:
     :show-inheritance:
 
-mooncake_utils.feature module
+特征抽取
 -----------------------------
 
 .. automodule:: mooncake_utils.feature
@@ -52,7 +47,7 @@ mooncake_utils.feature module
     :undoc-members:
     :show-inheritance:
 
-mooncake_utils.file module
+文件操作
 --------------------------
 
 .. automodule:: mooncake_utils.file
@@ -60,7 +55,7 @@ mooncake_utils.file module
     :undoc-members:
     :show-inheritance:
 
-mooncake_utils.hadoop module
+Hadoop相关
 ----------------------------
 
 .. automodule:: mooncake_utils.hadoop
@@ -68,7 +63,7 @@ mooncake_utils.hadoop module
     :undoc-members:
     :show-inheritance:
 
-mooncake_utils.log module
+日志辅助
 -------------------------
 
 .. automodule:: mooncake_utils.log
@@ -76,7 +71,7 @@ mooncake_utils.log module
     :undoc-members:
     :show-inheritance:
 
-mooncake_utils.termcolor module
+彩色print辅助类
 -------------------------------
 
 .. automodule:: mooncake_utils.termcolor
@@ -84,11 +79,3 @@ mooncake_utils.termcolor module
     :undoc-members:
     :show-inheritance:
 
-
-Module contents
----------------
-
-.. automodule:: mooncake_utils
-    :members:
-    :undoc-members:
-    :show-inheritance:
