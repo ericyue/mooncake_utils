@@ -207,16 +207,6 @@ def gen_today(delta = 1, raw = False, short = True, with_time = False, only_time
 
   return str_dt
 
-def int2datestr(date, diff):
-  if date == None:
-    sec = time.time()
-  else:
-    sd = time.strptime(date,'%Y%m%d')
-    sec = time.mktime(sd)
-  sec = sec - 86400 * diff  # 1 day is 86400 second
-  ltime = time.localtime(sec)
-  return time.strftime('%Y%m%d',ltime)
-
 if __name__ == "__main__":
   #print gen_date_list(0, 4)
   #print gen_date_list(0, 4, join=True)
@@ -228,6 +218,5 @@ if __name__ == "__main__":
   #print gen_today(delta=0,with_time=True,short=False)
   print gen_today(only_time=True)
   #print gen_today(delta=0, only_time=True, with_time=True)
-  exit()
   print gen_date_list(begin='20170301',end='20170303', exclude=['20170204'])
   print gen_date_list(begin='20170301',end=None, exclude=['20170204'],exclude_today=False)
