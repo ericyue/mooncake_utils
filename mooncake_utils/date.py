@@ -30,6 +30,10 @@ def datediff(dt, base = None, unit = 'day'):
 def gen_date_list_by_days(begin = None, days=7, join = False,  exclude = []):
   """
     生成指定的时间list
+    :param begin: 起始日期，默认要求datetime类型，如果是str会自动尝试解析成datetime
+    :param days: 生成距离begin的最近几天
+    :param join: 是否将list按照,拼接。hadoop的input目录常用
+    :param exclude: 去除日期。 统计数据时常用，统计最近7天，不过某几天数据损坏需要去掉某几天。
     
     >>> gen_date_list_by_days(begin ='20170620', days=3) # 今天2017-6-24
     ['20170619', '20170618', '20170617']
