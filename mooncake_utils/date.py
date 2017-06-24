@@ -7,6 +7,15 @@ import datetime
 from dateutil.parser import parse
 
 def datediff(dt, base = None, unit = 'day'):
+  """
+    用来计算分两个datetime的相差天数或者分钟数
+    
+    Parameters
+    ----------
+    dt: input date
+    base: 基准日期
+    unit: 计算粒度，默认返回diff天数
+  """
   if not base:
     base = datetime.datetime.now()
   if unit == "day":
