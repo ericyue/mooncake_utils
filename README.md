@@ -5,4 +5,6 @@
 
 [![Documentation Status](https://readthedocs.org/projects/mooncake-utils/badge/?version=latest)](http://mooncake-utils.readthedocs.io/en/latest/?badge=latest)
 
+[![PyPI](https://img.shields.io/pypi/v/nine.svg)](https://pypi.python.org/pypi/mooncake_utils/)
+
 文档：http://mooncake-utils.readthedocs.io
