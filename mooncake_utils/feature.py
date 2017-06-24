@@ -17,7 +17,7 @@ class FeatureHasher():
     初始化特征类参数
 
     :param size: 特征总维度，也就是哈希桶的数目.
-    :param hash_module: 采用的哈希库，可选 ``city``,``mmh3``
+    :param hash_module: 采用的哈希库，可选 ``city``, ``mmh3``
     :param debug: 打印debug信息
     :param print_collision: 是否打印冲突率
     :param dense: 是否生成稠密结果
