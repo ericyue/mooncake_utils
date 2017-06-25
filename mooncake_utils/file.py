@@ -29,3 +29,12 @@ def rm_folder(path, debug = False):
     if not debug:
       os.remove(one)
 
+def rglob(p):
+  matches = []
+  for root, dirnames, filenames in os.walk(p):
+      for filename in filenames:
+        path = os.path.join(root, filename)
+        matches.append(path)
+  
+  return matches
+
