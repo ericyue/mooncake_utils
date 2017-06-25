@@ -1,8 +1,6 @@
 #-*- coding:utf-8 -*-
 import os,sys
 import multiprocessing
-base = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-sys.path.append("%s" % base)
 from mooncake_utils.cmd import run_cmd
 from mooncake_utils.hadoop import Hadoop
 from mooncake_utils.date import *
@@ -39,7 +37,7 @@ def multi_run():
 if __name__ == "__main__":
     FLAGS(sys.argv)
     if FLAGS.with_mu:
-      cmd = "cp -r %s ./bin" % conf['job']['mooncake_utils_path']
-      rum_cmd(cmd)
+      cmd = "rm -rf ./bin/mooncake_utils && cp -r %s ./bin" % conf['job']['mooncake_utils_path']
+      run_cmd(cmd)
 
     multi_run()
