@@ -90,10 +90,12 @@ class Hadoop:
       self.pack_upload()
       cprint("[input hdfs path]")
       print input_path
-      cprint("[output hdfs path")
+      cprint("[output hdfs path]")
       print self.output_path
       cprint("[current job name]")
       print self.job_name
+
+      self.local_output = "./output/%s/%s" % (self.run_date, self.output_path.split("/")[-1])
       
       command = self.hadoop_bin_path+" " + self.streaming_jar 
       command += "  -D mapred.job.map.capacity=10000" +\
