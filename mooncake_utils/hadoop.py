@@ -80,6 +80,8 @@ class Hadoop:
     self.datapath = self.homepath + "/data/"
     self.logpath = self.homepath + "/log/"
     self.temppath = self.homepath + "/temp"
+    
+    self.local_output = "./output/%s/%s" % (self.run_date, self.output_path.split("/")[-1])
 
   def run(self, input_path, get_result_to_local=True, need_alert=False,
             getmerge=False):
@@ -95,7 +97,6 @@ class Hadoop:
       cprint("[current job name]")
       print self.job_name
 
-      self.local_output = "./output/%s/%s" % (self.run_date, self.output_path.split("/")[-1])
       
       command = self.hadoop_bin_path+" " + self.streaming_jar 
       command += "  -D mapred.job.map.capacity=10000" +\
