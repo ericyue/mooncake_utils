@@ -63,6 +63,8 @@ def run_cmd_noblock(cmd, debug = False):
   logger.info(text) 
   return status, text
 
+def md5_file(path):
+  return md5(path)
 
 def md5(path):
   """

@@ -106,6 +106,7 @@ class Hadoop:
               "  -D mapred.job.name=mooncake_"+self.job_name + \
               "  -D mapreduce.reduce.memory.mb=2000" +\
               "  -D mapreduce.map.memory.mb=2000" +\
+              "  -D mapreduce.output.fileoutputformat.compress=flase" +\
               "  -D mapreduce.reduce.java.opts=-Xmx2000M" +\
               "  -D mapreduce.map.java.opts=-Xmx2000M" +\
               "  -D mapred.child.java.opts=-Xmx2000m" +\
