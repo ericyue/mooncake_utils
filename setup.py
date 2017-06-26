@@ -6,15 +6,18 @@
 # @author Eric Yue ( hi.moonlight@gmail.com )
 # @version 0.0.1
 from distutils.core import setup
+
+V = "0.2"
+
 setup(
   name = 'mooncake_utils',
-  packages = ['mooncake_utils'], # this must be the same as the name above
-  version = '0.1',
+  packages = ['mooncake_utils'], 
+  version = V,
   description = 'just a useful utils for mooncake personal project.',
   author = 'mooncake',
   author_email = 'hi.moonlight@gmail.com',
   url = 'https://github.com/ericyue/mooncake_utils', 
-  download_url = 'https://github.com/ericyue/mooncake_utils/archive/0.1.zip', # I'll explain this in a second
+  download_url = 'https://github.com/ericyue/mooncake_utils/archive/%s.zip' % V, 
   keywords = ['utils','data','machine-learning'], # arbitrary keywords
   classifiers = [],
 )

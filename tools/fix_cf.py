@@ -2,8 +2,9 @@ import os,sys
 import mmap
 import glob
 from mooncake_utils.date import *
+
 if __name__ == "__main__":
-  output_fn = "./%s.dat.fix" % gen_today(delta=0,with_time=True)
+  output_fn = "./%s.dat.fix" % gen_today(delta=0, with_time=True)
   output = open(output_fn, "w")
   input_fn = sys.argv[1]
   print "input[%s] output[%s]" % (input_fn, output_fn)
