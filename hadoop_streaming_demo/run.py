@@ -19,7 +19,8 @@ FLAGS = gflags.FLAGS
 
 def available_task(delta_date):
     hadoop = Hadoop(run_date=delta_date)
-    input_path = "/tmp/{%s}/ "  % delta_date
+    input_dt = gen_date_list_by_days(str2date(delta_date), days=10,join=True, include_begin_day=True)
+    input_path = "/tmp/{%s}/ "  % input_dt
     output_path = hadoop.output_path
 
     if hadoop.run(input_path) != 0:
