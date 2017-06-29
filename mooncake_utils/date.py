@@ -12,7 +12,7 @@ def datediff(dt, base = None, unit = 'day'):
 
     如果不显示的指定base，则计算与当前时间的diff
     
-    :param dt: input date
+    :param dt: input date ``必须是datetime``
     :param base: 基准日期
     :param unit: 计算粒度,可选的有 ``day``, ``hour`` , ``minute`` , ``second`` 
   """
