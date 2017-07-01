@@ -38,3 +38,13 @@ def rglob(p):
   
   return matches
 
+
+
+def safewrite(filename, content):
+  """Writes the content to a temp file and then moves the temp file to 
+  given filename to avoid overwriting the existing file in case of errors.
+  """
+  f = file(filename + '.tmp', 'w')
+  f.write(content)
+  f.close()
+  os.rename(f.name, filename)
