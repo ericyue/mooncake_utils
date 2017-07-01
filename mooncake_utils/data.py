@@ -176,5 +176,92 @@ def storify(mapping, *requireds, **defaults):
   
   return stor
 
+
+class Counter(storage):
+  """Keeps count of how many times something is added.
+    
+    >>> c = counter()
+    >>> c.add('x')
+    >>> c.add('x')
+    >>> c.add('x')
+    >>> c.add('x')
+    >>> c.add('x')
+    >>> c.add('y')
+    >>> c['y']
+    1
+    >>> c['x']
+    5
+    >>> c.most()
+    ['x']
+  """
+  def add(self, n):
+    self.setdefault(n, 0)
+    self[n] += 1
+  
+  def most(self):
+    """Returns the keys with maximum count."""
+    m = max(itervalues(self))
+    return [k for k, v in iteritems(self) if v == m]
+    
+  def least(self):
+    """Returns the keys with mininum count."""
+    m = min(self.itervalues())
+    return [k for k, v in iteritems(self) if v == m]
+
+  def percent(self, key):
+     """Returns what percentage a certain key is of all entries.
+       >>> c = counter()
+       >>> c.add('x')
+       >>> c.add('x')
+       >>> c.add('x')
+       >>> c.add('y')
+       >>> c.percent('x')
+       0.75
+       >>> c.percent('y')
+       0.25
+     """
+     return float(self[key])/sum(self.values())
+       
+  def sorted_keys(self):
+    """Returns keys sorted by value.
+       
+       >>> c = counter()
+       >>> c.add('x')
+       >>> c.add('x')
+       >>> c.add('y')
+       >>> c.sorted_keys()
+       ['x', 'y']
+    """
+    return sorted(self.keys(), key=lambda k: self[k], reverse=True)
+  
+  def sorted_values(self):
+    """Returns values sorted by value.
+      
+      >>> c = counter()
+      >>> c.add('x')
+      >>> c.add('x')
+      >>> c.add('y')
+      >>> c.sorted_values()
+      [2, 1]
+    """
+    return [self[k] for k in self.sorted_keys()]
+  
+  def sorted_items(self):
+    """Returns items sorted by value.
+      
+      >>> c = counter()
+      >>> c.add('x')
+      >>> c.add('x')
+      >>> c.add('y')
+      >>> c.sorted_items()
+      [('x', 2), ('y', 1)]
+    """
+    return [(k, self[k]) for k in self.sorted_keys()]
+  
+  def __repr__(self):
+    return '<Counter ' + dict.__repr__(self) + '>'
+     
+counter = Counter
+
 if __name__ == "__main__":
     pass
