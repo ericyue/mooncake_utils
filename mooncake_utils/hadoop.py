@@ -84,7 +84,7 @@ class Hadoop:
     self.local_output = "./output/%s/%s" % (self.run_date, self.output_path.split("/")[-1])
 
   def run(self, input_path, get_result_to_local=True, need_alert=False,
-            getmerge=False):
+            getmerge=False, extra_cmd = ""):
 
       cprint('\n[hadoop job is preparing ...]', 'white', 'on_magenta')
       print ""
@@ -99,6 +99,8 @@ class Hadoop:
 
       
       command = self.hadoop_bin_path+" " + self.streaming_jar 
+      if extra_cmd != "":
+        command += "  %s  " % extra_cmd
       command += "  -D mapred.job.map.capacity=10000" +\
               "  -D mapred.job.reduce.capacity=10000"+\
               "  -D mapred.job.priority="+ self.job_priority + \
@@ -114,6 +116,7 @@ class Hadoop:
               "  -input " + input_path.strip() +\
               "  -output "+ self.output_path.strip() +\
               "  -cacheArchive "+self.dfs_mapred_tar+"#"+self.tar_alias_name
+      
 
       command += "  -cacheArchive "+ self.python_archive +\
               "  -mapper \" "+ self.python_bin_path + " " + self.tar_alias_name+"/bin/"+ self.mapper_file_name +" "+self.job_name +"\""+\
