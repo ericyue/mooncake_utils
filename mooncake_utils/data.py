@@ -5,6 +5,37 @@
 import os,sys
 import mmap
 
+def dictfind(dictionary, element):
+  """
+  Returns a key whose value in `dictionary` is `element` 
+  or, if none exists, None.
+  
+    >>> d = {1:2, 3:4}
+    >>> dictfind(d, 4)
+    3
+    >>> dictfind(d, 5)
+  """
+  for (key, value) in iteritems(dictionary):
+    if element is value: 
+      return key
+
+def dictfindall(dictionary, element):
+  """
+  Returns the keys whose values in `dictionary` are `element`
+  or, if none exists, [].
+  
+    >>> d = {1:4, 3:4}
+    >>> dictfindall(d, 4)
+    [1, 3]
+    >>> dictfindall(d, 5)
+    []
+  """
+  res = []
+  for (key, value) in iteritems(dictionary):
+    if element is value:
+      res.append(key)
+  return res
+
 def read_mmap(fn):
   """read_mmap
 
