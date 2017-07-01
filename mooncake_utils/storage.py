@@ -10,9 +10,8 @@ import datetime, time, re, json
 
 class Storage(dict):
   """
-  A Storage object is like a dictionary except `obj.foo` can be used
-  in addition to `obj['foo']`.
-  
+  类似dict, 但是可以通过.来直接访问： s.a instead of s['a'] 
+
     >>> o = storage(a=1)
     >>> o.a
     1
@@ -82,7 +81,6 @@ def storify(mapping, *requireds, **defaults):
   """
   _unicode = defaults.pop('_unicode', False)
 
-  # if _unicode is callable object, use it convert a string to unicode.
   to_unicode = safeunicode
   if _unicode is not False and hasattr(_unicode, "__call__"):
     to_unicode = _unicode
