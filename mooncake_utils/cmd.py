@@ -154,7 +154,7 @@ def setarg(pos, val):
         else:
             return sys.argv[len(sys.argv)-1]
 
-def push(src, host, target, port = 22):
+def scp(src, host, target, port = 22):
   for host in host:
     run_cmd("scp -P %s %s %s:%s" % (port, src, host, target))
     run_cmd("scp -P %s %s.md5 %s:%s.md5" % (port, src, host, target))
