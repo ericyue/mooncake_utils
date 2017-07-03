@@ -42,8 +42,39 @@ def get_logger(
     logger.info("add file_hander to logger {}".format(log_file))
 
   logger.info("init logger success [{}]".format(name))
-  return logger
+  return LogWrapper(logger)
+
+class LogWrapper():
+  def __init__(self, logger):
+    self.logger = logger
+    self.sep = " "
+
+  def set_sep(self, n):
+    self.sep = n
+
+  def info(self, *args):
+    self.logger.info(self.sep.join("{}".format(a) for a in args))
+  
+  def debug(self, *args):
+    self.logger.debug(self.sep.join("{}".format(a) for a in args))
+  
+  def warning(self, *args):
+    self.logger.warning(self.sep.join("{}".format(a) for a in args))
+  
+  def error(self, *args):
+    self.logger.error(self.sep.join("{}".format(a) for a in args))
+  
+  def critical(self, *args):
+    self.logger.critical(self.sep.join("{}".format(a) for a in args))
+  
+  def exception(self, *args):
+    self.logger.exception(self.sep.join("{}".format(a) for a in args))
 
 if __name__ == "__main__":
   logger = get_logger(debug = True, name = "mooncake_utils")
   logger.info("mooncake's a good guy!")
+  l = logger
+  l.info("dsf","aaa","123")
+  l.set_sep("#")
+  l.info("dsf","aaa","123")
+  l.debug("dsf","aaa","123")
