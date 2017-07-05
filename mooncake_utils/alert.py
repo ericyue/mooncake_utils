@@ -16,6 +16,8 @@ default_conf_path = os.getenv('MOONCAKE_UTILS_ALERT_CONF', base)
 """
 alert module, 目前集成了Slack和邮箱两个途径报警
 
+使用前请先配置好alert.yaml,并且设置环境变量MOONCAKE_UTILS_ALERT_CONF指向其路径。 
+
 """
 
 logger = get_logger(debug=True, name='mu.alert', with_file=False)
