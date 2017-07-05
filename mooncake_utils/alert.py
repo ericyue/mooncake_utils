@@ -14,7 +14,8 @@ from email.MIMEText import MIMEText
 default_conf_path = os.getenv('MOONCAKE_UTILS_ALERT_CONF', base)
   
 """
-alert module
+alert module, 目前集成了Slack和邮箱两个途径报警
+
 """
 
 logger = get_logger(debug=True, name='mu.alert', with_file=False)

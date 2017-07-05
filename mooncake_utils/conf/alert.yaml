@@ -1,0 +1,15 @@
+slack:
+  token : test
+  default_channel : test
+  enable : false
+  retry : 3
+
+mail:
+  enable : false
+  receiver : 'xxx'
+  username : xxxx
+  password : xxxx
+  smtp_server: smtp.xxx
+  smtp_port : 465
+  subject_prefix : xxxxx
+  retry : 3
