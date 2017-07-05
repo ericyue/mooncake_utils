@@ -6,9 +6,9 @@ base = os.path.dirname(os.path.abspath(__file__))
 
 from termcolor import colored, cprint
 import time
-from alert import *
 from mooncake_utils.date import *
 from mooncake_utils.cmd import run_cmd
+from mooncake_utils.alert import *
 
 ABSPATH = os.path.dirname(os.path.abspath(sys.argv[0]))
 
@@ -30,6 +30,7 @@ class Hadoop:
     self.conf.read(conf_path)
     self.run_date = run_date
     self.load_conf()
+    self.alert = Alert()
     print "jobname_base [%s]" % self.job_name 
 
   def filter_input(self, days, input_base):
@@ -156,7 +157,7 @@ class Hadoop:
 
       else:
         if need_alert:
-          alert("hadoop job faild [%s]" % self.job_name,channel="#hadoop-job")
+          self.alert.send("hadoop job faild [%s]" % self.job_name,channel="#hadoop-job")
         cprint("hadoop job faild",'red', attrs=['bold'], file=sys.stderr)
   
       return ret

@@ -95,5 +95,10 @@ class Alert:
     return False
 
 if __name__ == "__main__":
+  if len(sys.argv) <= 1: 
+    exit()
   a = Alert()
-  a.send('test alert')
+  msg = sys.argv[1]
+
+  logger.info(msg)
+  a.send(msg)
