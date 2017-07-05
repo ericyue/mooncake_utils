@@ -84,7 +84,7 @@ class Hadoop:
     
     self.local_output = "./output/%s/%s" % (self.run_date, self.output_path.split("/")[-1])
 
-  def run(self, input_path, get_result_to_local=True, need_alert=False,
+  def run(self, input_path, get_result_to_local=True, need_alert=True,
             getmerge=False, extra_cmd = ""):
 
       cprint('\n[hadoop job is preparing ...]', 'white', 'on_magenta')
