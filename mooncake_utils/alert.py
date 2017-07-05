@@ -59,7 +59,7 @@ class Alert:
         logger.info("sending [%s] with channel[%s]" % (msg, channel))
         return True
       except Exception, w:
-        logger.error("retry#%s send slack due to [%s]" %(attempt,w))
+        logger.exception("retry#%s send slack due to [%s]" %(attempt,w))
         attempt += 1
     return False 
 
@@ -74,16 +74,23 @@ class Alert:
     msg['To'] = self.conf['mail']['receiver']
     msg['Subject'] = subject 
     msg.attach(MIMEText(message))
-    try:
-      mailServer = smtplib.SMTP_SSL(self.conf['mail']['smtp_server'],
-                  self.conf['mail']['smtp_port'])
-      mailServer.ehlo()
-      mailServer.login(username, password)
-      mailServer.sendmail(username, self.conf['mail']['receiver'], msg.as_string())
-      mailServer.close()
-    except Exception as e:
-      logger.exception(e)	
+
+    attempt = 0
+    while attempt < self.conf['slack']['retry']:
+      try:
+        mailServer = smtplib.SMTP_SSL(self.conf['mail']['smtp_server'],
+                    self.conf['mail']['smtp_port'])
+        mailServer.ehlo()
+        mailServer.login(username, password)
+        mailServer.sendmail(username, self.conf['mail']['receiver'], msg.as_string())
+        mailServer.close()
+        return True
+      except Exception as e:
+        attempt += 1
+        logger.exception(e)	
+
+    return False
 
 if __name__ == "__main__":
   a = Alert()
-  a.send('yuebin')
+  a.send('test alert')
