@@ -7,7 +7,7 @@ base = os.path.dirname(os.path.abspath(__file__))
 from termcolor import colored, cprint
 import time
 from mooncake_utils.date import *
-from mooncake_utils.cmd import run_cmd
+from mooncake_utils.cmd import *
 from mooncake_utils.alert import *
 
 ABSPATH = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -224,7 +224,16 @@ class Hadoop:
       print cmd
       run_cmd(cmd)
 
+  def latest_paths(self, path = "/tmp/warehouse/consume/", limit = 3):
+    status, text= run_cmd_noblock("%s fs -ls %s" % (self.hadoop_bin_path,path))
+    lines = text.split("\n")
+    ret = []
+    for line in lines[-limit:]:
+      ret.append(line.split(" ")[-1])
+  
+    return ret
+
 if __name__ == "__main__":
-  s = Hadoop()
-  print s.job_name
   #s.run()
+  pass
+  #print latest_paths()
