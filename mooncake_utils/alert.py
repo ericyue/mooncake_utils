@@ -44,14 +44,14 @@ class Alert:
     self.slack = Slacker(self.conf['slack']['token'])
     self.default_channel = self.conf['slack']['default_channel']
 
-  def send(self, msg, channel = None):
+  def send(self, msg, channel = None, enable_slack = True, enable_mail = True):
     if not channel:
       channel = self.default_channel
 
-    if self.enable_slack:
+    if self.enable_slack and enable_slack:
       self.send_slack(msg, channel)
     
-    if self.enable_mail:
+    if self.enable_mail and enable_mail:
       self.send_mail(msg, channel )
 
   def send_slack(self, msg, channel):
