@@ -7,6 +7,7 @@ import os,sys
 from mmh3 import hash as mmh3_hash
 from mooncake_utils.log import *
 from cityhash import CityHash32 as city_hash
+import random
 
 logger = get_logger(name="fea")
 
@@ -28,14 +29,22 @@ class FeatureHasher():
           size = 1000, hash_module = "mmh3",
           debug = False, print_collision = False,
           dense = False, use_col_index = False,
-          random_drop = False, random_drop_ratio):
+          positive_random_drop = False, positive_random_drop_ratio = 0.0,
+          negative_random_drop = False, negative_random_drop_ratio = 0.0):
 
     self.size = size
     self.debug = debug
+    self._stat = {}
     self._collision = {}
     self.print_collision = print_collision
     self.dense = dense
     self.use_col_index = use_col_index
+    
+    self.positive_random_drop = positive_random_drop
+    self.positive_random_drop_ratio = positive_random_drop_ratio
+
+    self.negative_random_drop = negative_random_drop
+    self.negative_random_drop_ratio = negative_random_drop_ratio
 
     self.__init_variable()
 
@@ -134,7 +143,23 @@ class FeatureHasher():
 
       if u == "__label__":
         label = obj[u]
+
+        #random drop
+        _g = random.uniform(0.0, 1.0)
+         
+        if label > 0 and \
+          self.positive_random_drop and \
+          _g <= self.positive_random_drop_ratio:
+            return None
+        
+        if label <= 0 and \
+          self.negative_random_drop and \
+          _g <= self.negative_random_drop_ratio:
+            return None
+
         continue
+
+
       if type(obj[u]) in [list, tuple]:
         self.list_hash(u, obj[u], ret)
       else:
@@ -147,7 +172,18 @@ class FeatureHasher():
 
     if self.debug:
       logger.debug("%s" % msg)
+
+    if label not in self._stat:
+      self._stat[label] = 0
+    self._stat[label] += 1
+
     return msg
+
+  def stat(self):
+    logger.info(self._stat)
+    total = float(sum(self._stat.values()))
+    for label in self._stat:
+      logger.info("label[%s] ratio[%.4f%%]" % (label, (100*self._stat[label]/total)))
 
   def dense_format(self, label, obj):
     msg = ""
