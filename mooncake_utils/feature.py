@@ -12,7 +12,7 @@ logger = get_logger(name="fea")
 
 class FeatureHasher():
   """
-    一个简易的特征抽框架
+    一个简易的特征抽取框架
       
     初始化特征类参数
 
@@ -25,9 +25,10 @@ class FeatureHasher():
 
   """
   def __init__(self,
-          size=1000, hash_module="city",
-          debug=False, print_collision=False,
-          dense = False, use_col_index = False):
+          size = 1000, hash_module = "mmh3",
+          debug = False, print_collision = False,
+          dense = False, use_col_index = False,
+          random_drop = False, random_drop_ratio):
 
     self.size = size
     self.debug = debug
