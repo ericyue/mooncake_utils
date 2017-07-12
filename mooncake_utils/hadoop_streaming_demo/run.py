@@ -25,10 +25,14 @@ def available_task(delta_date):
 
   '''
   hadoop = Hadoop(run_date=delta_date)
-  input_dt = gen_date_list_by_days(str2date(delta_date), days=10,join=True, include_begin_day=True)
+  input_dt = gen_date_list_by_days(str2date(delta_date),
+                                  days = FLAGS.per_job_days,
+                                  join=True,
+                                  include_begin_day=True)
 
-  #TODO  change input_path
-  input_path = "/tmp/{%s}/ "  % input_dt
+
+  #TODO  change xxxxxxx
+  input_path = "/xxxxxxxx/{%s}/ "  % input_dt
   output_path = hadoop.local_output
 
   if hadoop.run(input_path) != 0:
