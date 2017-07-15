@@ -7,7 +7,8 @@ logbase = os.path.dirname(os.path.abspath(sys.argv[0])) + '/log/'
 def get_logger(
           debug = True, 
           name = "mu.log",
-          with_file = False):
+          with_file = False,
+          level = None):
   """get_logger
 
   :param debug:
@@ -19,12 +20,15 @@ def get_logger(
     return None
   formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - <%(filename)s-%(funcName)s:%(lineno)d> : %(message)s')
   if debug:
-      level=logging.DEBUG
+      _level=logging.DEBUG
   else:
-      level=logging.INFO
+      _level=logging.INFO
   
   logger = logging.getLogger(name)
-  logger.setLevel(level)
+  if not level:
+    logger.setLevel(_level)
+  else:
+    logger.setLevel(level)
   
   console_handler = logging.StreamHandler()
   console_handler.setFormatter(formatter)
@@ -51,6 +55,9 @@ class LogWrapper():
 
   def set_sep(self, n):
     self.sep = n
+  
+  def log(self, level, *args):
+    self.logger.log(level, self.sep.join("{}".format(a) for a in args))
 
   def info(self, *args):
     self.logger.info(self.sep.join("{}".format(a) for a in args))
@@ -71,10 +78,11 @@ class LogWrapper():
     self.logger.exception(self.sep.join("{}".format(a) for a in args))
 
 if __name__ == "__main__":
-  logger = get_logger(debug = True, name = "mooncake_utils")
+  logger = get_logger(debug = True, name = "mooncake_utils", level=3)
   logger.info("mooncake's a good guy!")
   l = logger
   l.info("dsf","aaa","123")
   l.set_sep("#")
   l.info("dsf","aaa","123")
   l.debug("dsf","aaa","123")
+  l.log(3,"2333333333dsf","aaa","123")
