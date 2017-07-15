@@ -17,6 +17,8 @@ gflags.DEFINE_integer("per_job_days", 1, "days in one job")
 
 FLAGS = gflags.FLAGS
 
+EXIT_CODE = 0
+
 def available_task(delta_date):
   '''
   启动任务process
@@ -35,23 +37,28 @@ def available_task(delta_date):
   input_path = "/xxxxxxxx/{%s}/ "  % input_dt
   output_path = hadoop.local_output
 
-  if hadoop.run(input_path) != 0:
-    print "error ..."
-  else:
-    post()
+  ret = hadoop.run(input_path)
+	if ret == 0:
+    ret += post()
+
+	return ret
 
 def post():
   '''
     streaming任务完成后做的一些后续操作
   '''
-  pass
+  return 0 # return 0 for good
+
+def callback(result):
+  global EXIT_CODE
+  EXIT_CODE += result
 
 def multi_run():
     pool = multiprocessing.Pool(processes = min(1, FLAGS.days))
     diff_day = datediff(str2date(FLAGS.date))
     for i in range(FLAGS.days) :
       dt =  gen_today(delta=(i+diff_day), raw=False)
-      p = pool.apply_async(available_task, (dt, ))
+      p = pool.apply_async(available_task, (dt, ), callback=callback)
     pool.close()
     pool.join()
 
