@@ -165,7 +165,7 @@ class FeatureHasher():
     if obj:
       self.ins = obj
 
-    self.logger.info(json.dumps(self.ins, indent = 3))
+    self.logger.debug(json.dumps(self.ins, indent = 3))
     
     self.__init_variable()
 
