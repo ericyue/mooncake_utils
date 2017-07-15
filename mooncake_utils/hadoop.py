@@ -88,7 +88,6 @@ class Hadoop:
             getmerge=False, extra_cmd = ""):
 
       cprint('\n[hadoop job is preparing ...]', 'white', 'on_magenta')
-      print ""
       self.prepare_local_dirs()
       self.pack_upload()
       cprint("[input hdfs path]")
@@ -127,12 +126,12 @@ class Hadoop:
   
       cprint("[hadoop run command]\n%s\n%s\n%s" % ("=="*50, pretty_cmd, "=="*50),"yellow","on_blue")
       
-      ret = -1
+      ret = 255
       try:
           ret = self.run_hadoop_retry(command, self.output_path)
       except KeyboardInterrupt:
           cprint("KeyboardInterrupt","red","on_blue")
-          ret = -1
+          ret = 256
 
       if ret == 0:
           cprint( "[hadoop job : %s done]" % self.job_name,"white","on_green")
@@ -174,7 +173,7 @@ class Hadoop:
               time.sleep(self.hadoop_retry_interval)
           else:
               return 0
-      return -1
+      return 255
   
   def copy_to_hadoop_retry(self,command, opath = ''):
       for i in range(self.hadoop_retry_times) :
@@ -189,7 +188,7 @@ class Hadoop:
               orgtime.sleep(self.hadoop_retry_interval)
           else:
               return 0
-      return -1
+      return 255
   
   def has_hadoop_dir(self,opath):
       if opath != '':
@@ -209,20 +208,17 @@ class Hadoop:
   def prepare_local_dirs(self):
       cprint( "[preparing local dirs]")
       cmd = "mkdir -p ./data ./log ./temp ./conf"
-      print cmd
       run_cmd(cmd)
   
   def pack_upload(self):
+      ret = 0
       cprint( "[pack upload and put to hadoop]")
       cmd = "tar czf ./temp/"+self.tar_alias_name+" conf bin data *.py "
-      print cmd
-      run_cmd(cmd)
+      ret += run_cmd(cmd)
       cmd = "%s fs -rm %s" % (self.hadoop_bin_path,self.dfs_mapred_tar)
-      print cmd
-      run_cmd(cmd)
+      ret += run_cmd(cmd)
       cmd = "%s fs -put ./temp/%s %s " %(self.hadoop_bin_path,self.tar_alias_name, self.dfs_mapred_tar)
-      print cmd
-      run_cmd(cmd)
+      ret += run_cmd(cmd)
 
   def latest_paths(self, path = "/tmp/warehouse/consume/", limit = 3):
     status, text= run_cmd_noblock("%s fs -ls %s" % (self.hadoop_bin_path,path))
@@ -232,6 +228,14 @@ class Hadoop:
       ret.append(line.split(" ")[-1])
   
     return ret
+  
+  def get_to_local(self, src, dest):
+      cmd = "%s fs -get %s %s " %(self.hadoop_bin_path, src, dest)
+      return run_cmd(cmd)
+
+  def getmerge_to_local(self, src, dest):
+      cmd = "%s fs -getmerge %s %s " %(self.hadoop_bin_path, src, dest)
+      return run_cmd(cmd)
 
 if __name__ == "__main__":
   #s.run()

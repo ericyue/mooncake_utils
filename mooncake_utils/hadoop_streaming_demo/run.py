@@ -38,10 +38,10 @@ def available_task(delta_date):
   output_path = hadoop.local_output
 
   ret = hadoop.run(input_path)
-	if ret == 0:
+  if ret == 0:
     ret += post()
 
-	return ret
+  return ret
 
 def post():
   '''

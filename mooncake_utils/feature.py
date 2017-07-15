@@ -48,6 +48,9 @@ class FeatureHasher():
 
     self.__init_variable()
 
+    self.ins = {}
+    self.error_value = {"","-","\N"}
+
     if hash_module == "mmh3":
       self._hashlib = mmh3_hash
     elif hash_module == "city":
@@ -57,6 +60,13 @@ class FeatureHasher():
 
   def __init_variable(self):
     self.__counter = 0
+
+  def put(self, key, value):
+    if self.check_valid(value):
+      self.ins[key] = value
+      return True
+    else:
+      return False
 
   def __hash(self, obj):
     ret = abs(self._hashlib(obj)) % self.size
@@ -101,7 +111,7 @@ class FeatureHasher():
     return hash_key, value
 
   def check_valid(self, obj):
-    if obj.strip() in ["", "-", "0"]:
+    if not obj or obj in self.error_value:
       return False
     else:
       return True
@@ -129,41 +139,46 @@ class FeatureHasher():
                           item, ret, self.__counter)
       self.__counter += 1
 
-  def hash(self, obj):
+  def hash(self, obj = None):
+    if obj:
+      self.ins = obj
+
     if self.debug:
-      logger.debug(obj)
+      logger.debug(self.ins)
     
     self.__init_variable()
 
     ret = {}
     label = None
-    for u in obj:
+    if "__label__" in self.ins:
+      label = self.ins['__label__']
+
+      #random drop
+      _g = random.uniform(0.0, 1.0)
+       
+      if label > 0 and \
+        self.positive_random_drop and \
+        _g <= self.positive_random_drop_ratio:
+          return None
+      
+      if label <= 0 and \
+        self.negative_random_drop and \
+        _g <= self.negative_random_drop_ratio:
+          return None
+
+    else:
+      return None
+
+    del self.ins['__label__']
+
+    for u in self.ins:
       if not self.check_valid(u):
         continue
 
-      if u == "__label__":
-        label = obj[u]
-
-        #random drop
-        _g = random.uniform(0.0, 1.0)
-         
-        if label > 0 and \
-          self.positive_random_drop and \
-          _g <= self.positive_random_drop_ratio:
-            return None
-        
-        if label <= 0 and \
-          self.negative_random_drop and \
-          _g <= self.negative_random_drop_ratio:
-            return None
-
-        continue
-
-
-      if type(obj[u]) in [list, tuple]:
-        self.list_hash(u, obj[u], ret)
+      if type(self.ins[u]) in [list, tuple]:
+        self.list_hash(u, self.ins[u], ret)
       else:
-        self.single_hash(u, obj[u], ret, 0)
+        self.single_hash(u, self.ins[u], ret, 0)
 
     if self.dense:
       msg = self.dense_format(label, ret)
@@ -176,7 +191,8 @@ class FeatureHasher():
     if label not in self._stat:
       self._stat[label] = 0
     self._stat[label] += 1
-
+    
+    self.ins = {}
     return msg
 
   def stat(self):
