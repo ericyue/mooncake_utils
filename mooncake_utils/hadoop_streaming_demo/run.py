@@ -69,3 +69,4 @@ if __name__ == "__main__":
       run_cmd(cmd)
 
     multi_run()
+    exit(EXIT_CODE)
