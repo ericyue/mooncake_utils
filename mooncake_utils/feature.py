@@ -35,7 +35,9 @@ class FeatureHasher():
     self.discretization = discretization
     self.size = size
     self.debug = debug
-    self.logger = get_logger(name="fea", debug=debug)
+    self.logger = get_logger(name="fea", debug=debug, wrapper=False)
+    self.logger.info(json.dumps(self.discretization, indent=3))
+
     self._stat = {}
     self._collision = {}
     self.print_collision = print_collision
@@ -52,7 +54,6 @@ class FeatureHasher():
 
     self.ins = {}
     self.error_value = {"","-","\N"}
-    self.logger.info(json.dumps(self.discretization, indent=3))
 
     if hash_module == "mmh3":
       self._hashlib = mmh3_hash

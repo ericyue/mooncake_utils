@@ -8,7 +8,7 @@ def get_logger(
           debug = True, 
           name = "mu.log",
           with_file = False,
-          level = None):
+          level = None, wrapper = True):
   """get_logger
 
   :param debug:
@@ -46,6 +46,8 @@ def get_logger(
     logger.info("add file_hander to logger {}".format(log_file))
 
   logger.info("init logger success [{}]".format(name))
+  if not wrapper:
+    return logger
   return LogWrapper(logger)
 
 class LogWrapper():
