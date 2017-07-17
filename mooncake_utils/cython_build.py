@@ -8,8 +8,8 @@ setarg(2, '--inplace')
 
 ABSPATH = os.path.dirname(os.path.abspath(sys.argv[0]))
 
-def build():
-  to_build = glob.glob('%s/lib/*.pyx' % ABSPATH)
+def build(folder = 'lib'):
+  to_build = glob.glob('%s/%s/*.pyx' % (ABSPATH, folder))
   
   for one in to_build:
     setup(ext_modules = cythonize(one))
