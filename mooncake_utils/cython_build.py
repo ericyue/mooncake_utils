@@ -21,7 +21,7 @@ def build(folder = 'lib'):
 
 def build_pyx(to_build = []):
   setarg(1, 'build_ext')
-  setarg(2, '-b lib/')
+  setarg(2, '-b ./lib/')
 
   for one in to_build:
     setup(ext_modules = cythonize(one))
