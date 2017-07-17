@@ -224,8 +224,18 @@ class Hadoop:
     status, text= run_cmd_noblock("%s fs -ls %s" % (self.hadoop_bin_path,path))
     lines = text.split("\n")
     ret = []
-    for line in lines[-limit:]:
+    #for line in lines[-limit:]:
+    #  if line.find("done")!=-1:
+    #    continue
+    #  ret.append(line.split(" ")[-1])
+   
+    for line in reversed(lines):
+      if limit <=0:
+        break
+      if line.find("done")!=-1:
+        continue
       ret.append(line.split(" ")[-1])
+      limit = limit - 1
   
     return ret
   
