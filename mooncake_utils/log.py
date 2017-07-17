@@ -8,7 +8,7 @@ def get_logger(
           debug = True, 
           name = "mu.log",
           with_file = False,
-          level = None, wrapper = True):
+          level = None, wrapper = False):
   """get_logger
 
   :param debug:

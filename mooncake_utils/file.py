@@ -29,6 +29,16 @@ def rm_folder(path, debug = False):
     if not debug:
       os.remove(one)
 
+
+def glob2list(fn):
+  ret = []
+  if not fn: return ret
+
+  for path in fn:
+    ret += glob.glob(path)
+
+  return list(set(ret))
+
 def rglob(p):
   matches = []
   for root, dirnames, filenames in os.walk(p):
@@ -37,8 +47,6 @@ def rglob(p):
         matches.append(path)
   
   return matches
-
-
 
 def safewrite(filename, content):
   """Writes the content to a temp file and then moves the temp file to 
