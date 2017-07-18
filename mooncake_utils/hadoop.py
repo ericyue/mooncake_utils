@@ -110,9 +110,6 @@ class Hadoop:
               "  -D mapreduce.reduce.memory.mb="+self.reduce_memory_limit +\
               "  -D mapreduce.map.memory.mb="+self.map_memory_limit +\
               "  -D mapreduce.output.fileoutputformat.compress=flase" +\
-              "  -D mapreduce.reduce.java.opts=-Xmx2000M" +\
-              "  -D mapreduce.map.java.opts=-Xmx2000M" +\
-              "  -D mapred.child.java.opts=-Xmx2000m" +\
               "  -D mapred.combine.input.format.local.only=false"+\
               "  -input " + input_path.strip() +\
               "  -output "+ self.output_path.strip() +\
