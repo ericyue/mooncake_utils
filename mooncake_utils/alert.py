@@ -12,8 +12,6 @@ from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 
 default_conf_path = os.getenv('MOONCAKE_UTILS_ALERT_CONF', base)
-  
-
 
 class Alert:
   """
@@ -43,13 +41,13 @@ class Alert:
     self.enable_mail = self.conf['mail'].get('enable', True)
     self.slack = Slacker(self.conf['slack']['token'])
     self.default_channel = self.conf['slack']['default_channel']
-    self.enable_log = False
+    self.enable_log = True
 
   def send(self, msg, channel = None, enable_slack = True, enable_mail = True):
     if not channel:
       channel = self.default_channel
     if self.enable_log:
-      self.logger.info("sending [%s]" % (msg))
+      self.logger.info(msg)
 
     if self.enable_slack and enable_slack:
       self.send_slack(msg, channel)
