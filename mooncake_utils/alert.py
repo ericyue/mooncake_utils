@@ -14,7 +14,6 @@ from email.MIMEText import MIMEText
 default_conf_path = os.getenv('MOONCAKE_UTILS_ALERT_CONF', base)
   
 
-logger = get_logger(debug=True, name='mu.alert', with_file=False)
 
 class Alert:
   """
@@ -24,6 +23,7 @@ class Alert:
   
   """
 
+  logger = get_logger(debug=True, name='mu.alert', with_file=False)
   conf_path = default_conf_path
   slack = None
 
@@ -36,17 +36,20 @@ class Alert:
     if conf_path:
       self.conf_path = conf_path
 
-    logger.info("init Alert with conf[{}]".format(self.conf_path))
+    self.logger.info("init Alert with conf[{}]".format(self.conf_path))
     self.conf = yaml.load(open(self.conf_path, 'r'))
     
     self.enable_slack = self.conf['slack'].get('enable', True)
     self.enable_mail = self.conf['mail'].get('enable', True)
     self.slack = Slacker(self.conf['slack']['token'])
     self.default_channel = self.conf['slack']['default_channel']
+    self.enable_log = False
 
   def send(self, msg, channel = None, enable_slack = True, enable_mail = True):
     if not channel:
       channel = self.default_channel
+    if self.enable_log:
+      self.logger.info("sending [%s]" % (msg))
 
     if self.enable_slack and enable_slack:
       self.send_slack(msg, channel)
@@ -59,10 +62,9 @@ class Alert:
     while attempt < self.conf['slack']['retry']:
       try:
         self.slack.chat.post_message(channel, msg)
-        logger.info("sending [%s] with channel[%s]" % (msg, channel))
         return True
       except Exception, w:
-        logger.exception("retry#%s send slack due to [%s]" %(attempt,w))
+        self.logger.exception("retry#%s send slack due to [%s]" %(attempt,w))
         attempt += 1
     return False 
 
@@ -90,7 +92,7 @@ class Alert:
         return True
       except Exception as e:
         attempt += 1
-        logger.exception(e)	
+        self.logger.exception(e)	
 
     return False
 
@@ -100,5 +102,4 @@ if __name__ == "__main__":
   a = Alert()
   msg = sys.argv[1]
 
-  logger.info(msg)
   a.send(msg)

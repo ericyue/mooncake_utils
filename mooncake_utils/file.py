@@ -37,7 +37,7 @@ def glob2list(fn):
   for path in fn:
     ret += glob.glob(path)
 
-  return list(set(ret))
+  return sorted(list(set(ret)))
 
 def rglob(p):
   matches = []
