@@ -109,7 +109,7 @@ class Hadoop:
               "  -D mapred.job.name=mooncake_"+self.job_name + \
               "  -D mapreduce.reduce.memory.mb="+self.reduce_memory_limit +\
               "  -D mapreduce.map.memory.mb="+self.map_memory_limit +\
-              "  -D mapreduce.output.fileoutputformat.compress=flase" +\
+              "  -D mapreduce.output.fileoutputformat.compress=false" +\
               "  -D mapred.combine.input.format.local.only=false"+\
               "  -input " + input_path.strip() +\
               "  -output "+ self.output_path.strip() +\
