@@ -58,7 +58,8 @@ class Hadoop:
 
     self.streaming_jar = self.conf.get("hadoop","streaming_jar","streaming")
     self.job_priority = self.conf.get("hadoop","job_priority","VERY_HIGH")
-    self.memory_limit = self.conf.get("hadoop","memory_limit",2000)
+    self.map_memory_limit = self.conf.get("hadoop","map_memory_limit",2000)
+    self.reduce_memory_limit = self.conf.get("hadoop","reduce_memory_limit",2000)
     self.reduce_capacity = self.conf.get("hadoop","reduce_capacity",1000)
     self.reduce_num = self.conf.get("hadoop","reduce_num",50)
     self.map_num = self.conf.get("hadoop","map_num",10000)
@@ -106,8 +107,8 @@ class Hadoop:
               "  -D mapred.job.priority="+ self.job_priority + \
               "  -D mapred.reduce.tasks="+self.reduce_num + \
               "  -D mapred.job.name=mooncake_"+self.job_name + \
-              "  -D mapreduce.reduce.memory.mb=2000" +\
-              "  -D mapreduce.map.memory.mb=2000" +\
+              "  -D mapreduce.reduce.memory.mb="+self.reduce_memory_limit +\
+              "  -D mapreduce.map.memory.mb="+self.map_memory_limit +\
               "  -D mapreduce.output.fileoutputformat.compress=flase" +\
               "  -D mapreduce.reduce.java.opts=-Xmx2000M" +\
               "  -D mapreduce.map.java.opts=-Xmx2000M" +\
