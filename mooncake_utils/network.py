@@ -10,6 +10,8 @@ def get_ip_address(ifname):
         struct.pack('256s', ifname[:15])
     )[20:24])
 
+def get_hostname():
+  return socket.gethostname()
 
 
 if __name__ == "__main__":

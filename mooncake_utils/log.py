@@ -82,10 +82,16 @@ class LogWrapper():
 if __name__ == "__main__":
   logger = get_logger(debug = True, name = "mooncake_utils", level=3)
   logger.info("mooncake's a good guy!")
-  l = logger
-  l.info("dsf","aaa","123")
-  l.set_sep("#")
-  l.info("dsf","aaa","123")
-  l.debug("dsf","aaa","123")
-  l.log(3,"2333333333dsf","aaa","123")
+  #try:
+  #  raise Exception("ffff")
+  #except Exception: 
+  #  logger.exception("23333")
+
+  #l = logger
+  #l.info("dsf","aaa","123")
+  #l.set_sep("#")
+  #l.info("dsf","aaa","123")
+  #l.debug("dsf","aaa","123")
+  #l.log(3,"2333333333dsf","aaa","123")
+  #l.exception('23333')
 
