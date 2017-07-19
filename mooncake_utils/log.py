@@ -88,3 +88,4 @@ if __name__ == "__main__":
   l.info("dsf","aaa","123")
   l.debug("dsf","aaa","123")
   l.log(3,"2333333333dsf","aaa","123")
+
