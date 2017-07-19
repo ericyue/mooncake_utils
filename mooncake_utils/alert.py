@@ -97,7 +97,12 @@ class Alert:
 if __name__ == "__main__":
   if len(sys.argv) <= 1: 
     exit()
+
   a = Alert()
   msg = sys.argv[1]
+  try:
+    channel = sys.argv[2]
+  except:
+    channel = "#yy_online"
 
-  a.send(msg)
+  a.send(msg, channel=channel)

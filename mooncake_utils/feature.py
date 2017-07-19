@@ -53,7 +53,7 @@ class FeatureHasher():
     self.__init_variable()
 
     self.ins = {}
-    self.error_value = {"","-","\N"}
+    self.error_value = {"","-","\\N"}
 
     if hash_module == "mmh3":
       self._hashlib = mmh3_hash

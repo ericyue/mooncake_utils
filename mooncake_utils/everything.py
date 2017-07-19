@@ -8,3 +8,4 @@ from mooncake_utils.hadoop import *
 from mooncake_utils.feature import *
 from mooncake_utils.cython_build import *
 from mooncake_utils.config import *
+from mooncake_utils.network import *
