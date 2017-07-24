@@ -26,7 +26,8 @@ def build_pyx(to_build = [], delete = False):
 
   for one in to_build:
     setup(ext_modules = cythonize(one))
-    run_cmd('rm -rf %s' % one.replace('pyx','c'))
+    if delete:
+      run_cmd('rm -rf %s' % one.replace('pyx','c'))
  
   if len(to_build) >0 and delete:
     run_cmd('rm -rf %s/build' % ABSPATH)

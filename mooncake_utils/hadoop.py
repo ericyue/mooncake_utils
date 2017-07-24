@@ -86,7 +86,7 @@ class Hadoop:
     self.local_output = "./output/%s/%s" % (self.run_date, self.output_path.split("/")[-1])
 
   def run(self, input_path, get_result_to_local=True, need_alert=True,
-            getmerge=False, extra_cmd = ""):
+            getmerge=False, extra_cmd = "", map_param = "", reduce_param = ""):
 
       cprint('\n[hadoop job is preparing ...]', 'white', 'on_magenta')
       self.prepare_local_dirs()
@@ -117,8 +117,8 @@ class Hadoop:
       
 
       command += "  -cacheArchive "+ self.python_archive +\
-              "  -mapper \" "+ self.python_bin_path + " " + self.tar_alias_name+"/bin/"+ self.mapper_file_name +" "+self.job_name +"\""+\
-              "  -reducer \" "+ self.python_bin_path +" " + self.tar_alias_name+"/bin/"+ self.reducer_file_name +" "+self.job_name +"\""
+              "  -mapper \" "+ self.python_bin_path + " " + self.tar_alias_name+"/bin/"+ self.mapper_file_name +" "+ map_param +"\""+\
+              "  -reducer \" "+ self.python_bin_path +" " + self.tar_alias_name+"/bin/"+ self.reducer_file_name +" "+ reduce_param +"\""
   
       pretty_cmd = command.replace("  ", "\n\t")
   

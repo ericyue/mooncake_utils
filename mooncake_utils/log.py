@@ -2,6 +2,7 @@ import logging
 from mooncake_utils.file import mkdirp
 import os,sys
 from logging.handlers import TimedRotatingFileHandler,RotatingFileHandler
+
 logbase = os.path.dirname(os.path.abspath(sys.argv[0])) + '/log/'
 
 def get_logger(
@@ -18,7 +19,7 @@ def get_logger(
 
   if name == None or name == "":
     return None
-  formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - <%(filename)s-%(funcName)s:%(lineno)d> : %(message)s')
+  formatter = logging.Formatter('%(threadName)s | %(asctime)s - %(levelname)s - <%(filename)s-%(funcName)s:%(lineno)d> : %(message)s')
   if debug:
       _level=logging.DEBUG
   else:
