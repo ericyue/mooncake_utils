@@ -29,7 +29,6 @@ def rm_folder(path, debug = False):
     if not debug:
       os.remove(one)
 
-
 def glob2list(fn):
   ret = []
   if not fn: return ret
