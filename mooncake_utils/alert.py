@@ -5,10 +5,12 @@ sys.setdefaultencoding("utf-8")
 base = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(base)
 from mooncake_utils.log import *
+from os.path import basename
 from slacker import Slacker
 import yaml
 import smtplib
 from email.MIMEMultipart import MIMEMultipart
+from email.mime.application import MIMEApplication
 from email.MIMEText import MIMEText
 
 default_conf_path = os.getenv('MOONCAKE_UTILS_ALERT_CONF', base)
@@ -67,16 +69,24 @@ class Alert:
     return False 
 
 
-  def send_mail(self, message, channel):
+  def send_mail(self, message, channel, flist=[], to_list = None):
     subject = "[%s] #%s# %s" % (self.conf['mail'].get('subject_prefix',''), channel, message)
     username = self.conf['mail']['username']
     password = self.conf['mail']['password']
   
     msg = MIMEMultipart()
     msg['From'] = username
-    msg['To'] = self.conf['mail']['receiver']
+    if to_list:
+      msg['To'] = to_list
+    else:
+      msg['To'] = self.conf['mail']['receiver']
     msg['Subject'] = subject 
     msg.attach(MIMEText(message))
+    for f in flist:
+      with open(f, "rb") as fp:
+        att = MIMEApplication(fp.read())
+        att.add_header('Content-Disposition','attachment',filename=basename(f))
+        msg.attach(att)
 
     attempt = 0
     while attempt < self.conf['slack']['retry']:
@@ -85,7 +95,7 @@ class Alert:
                     self.conf['mail']['smtp_port'])
         mailServer.ehlo()
         mailServer.login(username, password)
-        mailServer.sendmail(username, self.conf['mail']['receiver'], msg.as_string())
+        mailServer.sendmail(username, msg['To'].split(','), msg.as_string())
         mailServer.close()
         return True
       except Exception as e:
@@ -105,4 +115,4 @@ if __name__ == "__main__":
   except:
     channel = "#yy_online"
 
-  a.send(msg, channel=channel)
+  a.send_mail(msg, channel=channel)

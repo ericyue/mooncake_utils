@@ -133,6 +133,8 @@ class FeatureHasher():
     return hash_key, value
 
   def check_valid(self, obj):
+    if type(obj) == list and len(obj) > 0:
+      return True
     if obj == None or obj in self.error_value:
       return False
     else:
@@ -160,6 +162,9 @@ class FeatureHasher():
       self.single_hash("%s_%s" % (self.__counter, key), 
                           item, ret, self.__counter)
       self.__counter += 1
+
+  def init(self):
+    self.ins = {}
 
   def hash(self, obj = None):
     if obj:
@@ -237,6 +242,7 @@ class FeatureHasher():
     return msg
 
 if __name__ == "__main__":
+  
   #a={"name":"mooncake","age":12,"float":3.333,"nickname":"mooncake","-":"","__label__":343}
   #b={"name":"moake","age":12,"float":5.333,"nickname":"moake","ffff":"","asdf":"-","vec":["23"]}
   #c={"name":"moake","age":32,"float":5.33,"vec":["23","moon","-"]}
@@ -266,6 +272,7 @@ if __name__ == "__main__":
               "u_fav":[0,100,300,1000,5000,10000,100000],
               "u_reg":[0,30,60,120,180,365,720]
           })
+
   ins = {'uid': '999999617', 'u_mobile': 'vivo', 'u_fav': 114, 'u_prov': '\xe6\xb5\x99\xe6\xb1\x9f', 'zb_biz': 'sing', '__label__': 0, 'zb_fans': '1699849', 'zb_biz_r': '106', 'aid': '603909207', 'zb_prov': '\xe8\xbe\xbd\xe5\xae\x81'}
   f.hash(ins)
   f.collision()
