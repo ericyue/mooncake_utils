@@ -67,11 +67,22 @@ class FeatureHasher():
 
   def put(self, key, value):
     if self.check_valid(value):
+      if key == "__label__":
+        _g = random.uniform(0.0, 1.0)
+         
+        if self.negative_random_drop and \
+          value <= 0 and \
+          _g <= self.negative_random_drop_ratio:
+            return False
+        if self.positive_random_drop and \
+          value > 0 and \
+          _g <= self.positive_random_drop_ratio:
+            return False
       self.ins[key] = value
-      self.logger.log(1, "add key[%s] val[%s]" % (key, self.ins[key]))
+      #self.logger.log(1, "add key[%s] val[%s]" % (key, self.ins[key]))
       return True
     else:
-      self.logger.log(1, "not valid key[%s] val[%s]" % (key, value))
+      #self.logger.log(1, "not valid key[%s] val[%s]" % (key, value))
       return False
 
   def __hash(self, obj):
@@ -142,10 +153,6 @@ class FeatureHasher():
 
   def single_hash(self, key, value, ret, index):
     if type(value) == str:
-      if not self.check_valid(value):
-        if self.debug:
-          self.logger.debug("invalid value[%s]" % value)
-        return
       h_key, h_val = self.string_hash(key, value)
     elif type(value) in [int, float]:
       if self.use_col_index:
@@ -178,18 +185,6 @@ class FeatureHasher():
     if "__label__" in self.ins:
       label = self.ins['__label__']
       del self.ins['__label__']
-      #random drop
-      _g = random.uniform(0.0, 1.0)
-       
-      if label > 0 and \
-        self.positive_random_drop and \
-        _g <= self.positive_random_drop_ratio:
-          return None
-      
-      if label <= 0 and \
-        self.negative_random_drop and \
-        _g <= self.negative_random_drop_ratio:
-          return None
     else:
       self.logger.error("no __label__ found in ins[%s]" % self.ins)
       return None
