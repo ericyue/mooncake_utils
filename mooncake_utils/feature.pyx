@@ -49,9 +49,7 @@ class FeatureHasher():
 
     self.negative_random_drop = negative_random_drop
     self.negative_random_drop_ratio = negative_random_drop_ratio
-
-    self.__init_variable()
-
+    self.label = None
     self.ins = {}
     self.error_value = {"","-","\\N"}
 
@@ -62,22 +60,8 @@ class FeatureHasher():
     else:
       raise Exception("unknown hash function")
 
-  def __init_variable(self):
-    self.__counter = 0
-
   def put(self, key, value):
     if self.check_valid(value):
-      if key == "__label__":
-        _g = random.uniform(0.0, 1.0)
-         
-        if self.negative_random_drop and \
-          value <= 0 and \
-          _g <= self.negative_random_drop_ratio:
-            return False
-        if self.positive_random_drop and \
-          value > 0 and \
-          _g <= self.positive_random_drop_ratio:
-            return False
       self.ins[key] = value
       #self.logger.log(1, "add key[%s] val[%s]" % (key, self.ins[key]))
       return True
@@ -106,10 +90,10 @@ class FeatureHasher():
                     len(self._collision), 100*cnt/len(self._collision)))
 
   def string_hash(self, key, value):
-    h_key = key+value
+    h_key = "%s%s" % (key,value)
     hash_value = self.__hash(h_key)
-    self.logger.debug("->key[%s] value[%s] / h_key[%s]->[%s] h_value[%s]->[%s]" % (
-                    key, value,h_key,hash_value,value,1))
+    #self.logger.debug("->key[%s] value[%s] / h_key[%s]->[%s] h_value[%s]->[%s]" % (
+    #                key, value,h_key,hash_value,value,1))
 
     if self.dense:
       return hash_value, hash_value
@@ -144,7 +128,7 @@ class FeatureHasher():
     return hash_key, value
 
   def check_valid(self, obj):
-    if type(obj) == list and len(obj) > 0:
+    if isinstance(obj,list) and len(obj) > 0:
       return True
     if obj == None or obj in self.error_value:
       return False
@@ -152,9 +136,9 @@ class FeatureHasher():
       return True
 
   def single_hash(self, key, value, ret, index):
-    if type(value) == str:
+    if isinstance(value, str):
       h_key, h_val = self.string_hash(key, value)
-    elif type(value) in [int, float]:
+    elif isinstance(value, (int, float)):
       if self.use_col_index:
         h_key,h_val = index, value
       else:
@@ -172,42 +156,48 @@ class FeatureHasher():
 
   def init(self):
     self.ins = {}
+    self.label = None
+    self.__counter = 0
+
+  def set_label(self, value):
+    self.label = value
+    
+    _g = random.uniform(0.0, 1.0)
+     
+    if self.negative_random_drop and \
+      value <= 0 and \
+      _g <= self.negative_random_drop_ratio:
+        return False
+    if self.positive_random_drop and \
+      value > 0 and \
+      _g <= self.positive_random_drop_ratio:
+        return False
+
+    return True
 
   def hash(self, obj = None):
     if obj:
       self.ins = obj
 
-    self.logger.debug(json.dumps(self.ins, indent = 3))
-    
-    self.__init_variable()
-
-    label = None
-    if "__label__" in self.ins:
-      label = self.ins['__label__']
-      del self.ins['__label__']
-    else:
-      self.logger.error("no __label__ found in ins[%s]" % self.ins)
-      return None
-
     ret = {}
     for u in self.ins:
-      if type(self.ins[u]) in [list, tuple]:
+      if isinstance(self.ins[u], (list, tuple)):
         self.list_hash(u, self.ins[u], ret)
       else:
         self.single_hash(u, self.ins[u], ret, 0)
 
     if self.dense:
-      msg = self.dense_format(label, ret)
+      msg = self.dense_format(self.label, ret)
     else:
-      msg = self.format(label, ret)
+      msg = self.format(self.label, ret)
 
-    self.logger.debug("%s" % msg)
-
-    if label not in self._stat:
-      self._stat[label] = 0
-    self._stat[label] += 1
     
-    self.ins = {}
+    if self.debug:
+      self.logger.debug("%s" % msg)
+      if self.label not in self._stat:
+        self._stat[self.label] = 0
+      self._stat[self.label] += 1
+    
     return msg
 
   def stat(self):
@@ -228,13 +218,11 @@ class FeatureHasher():
     return msg
 
   def format(self, label, obj):
-    msg = ""
-    for i in obj:
-      msg += "%s:%s " % (i,obj[i])
-
-    if label != None:
-      msg = "%s %s" % (label, msg.rstrip(" "))
-    return msg
+    #msg = ""
+    #for i in obj:
+    #  msg += "%s:%s " % (i,obj[i])
+    msg = ' '.join(['{}:{}'.format(k,v) for k,v in obj.iteritems()])
+    return "%s %s" % (label, msg)
 
 if __name__ == "__main__":
   
@@ -268,6 +256,11 @@ if __name__ == "__main__":
               "u_reg":[0,30,60,120,180,365,720]
           })
 
-  ins = {'uid': '999999617', 'u_mobile': 'vivo', 'u_fav': 114, 'u_prov': '\xe6\xb5\x99\xe6\xb1\x9f', 'zb_biz': 'sing', '__label__': 0, 'zb_fans': '1699849', 'zb_biz_r': '106', 'aid': '603909207', 'zb_prov': '\xe8\xbe\xbd\xe5\xae\x81'}
+  ins = {'uid': '999999617', 'u_mobile': 'vivo', 'u_fav': 114, 'u_prov': '\xe6\xb5\x99\xe6\xb1\x9f', 'zb_biz': 'sing', 'zb_fans': '1699849', 'zb_biz_r': '106', 'aid': '603909207', 'zb_prov': '\xe8\xbe\xbd\xe5\xae\x81'}
+  f.set_label(1)
   f.hash(ins)
-  f.collision()
+  
+  ins = {'uid': '9999996134247', 'u_mobile': 'vivo', 'u_fav': 114, 'u_prov': '\xe6\xb5\x99\xe6\xb1\x9f', 'zb_biz': 'sing', 'zb_fans': '1699849', 'zb_biz_r': '106', 'aid': '603909207', 'zb_prov': '\xe8\xbe\xbd\xe5\xae\x81'}
+  f.set_label(0)
+  f.hash(ins)
+  #f.collision()
