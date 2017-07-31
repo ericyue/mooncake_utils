@@ -40,7 +40,7 @@ def glob2list(fn):
 
   return sorted(list(set(ret)))
 
-def glob2list_by_date(fn, date_col = None, sort = True):
+def glob2list_by_date(fn, date_col = None):
   if not date_col:
     raise Exception("specify date_col")
 
@@ -56,10 +56,7 @@ def glob2list_by_date(fn, date_col = None, sort = True):
       split_[date_] = []
     split_[date_].append(path)
 
-  if sort:
-    return sorted(split_.items(), key = lambda x: x[0])
-  else:
-    return split_
+  return sorted(split_.items(), key = lambda x: x[0]),split_
 
 def rglob(p):
   matches = []

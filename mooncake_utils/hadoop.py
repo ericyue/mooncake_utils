@@ -104,9 +104,9 @@ class Hadoop:
         command += "  %s  " % extra_cmd
       command += "  -D mapred.job.map.capacity=10000" +\
               "  -D mapred.job.reduce.capacity=10000"+\
-              "  -D mapred.job.priority="+ self.job_priority + \
-              "  -D mapred.reduce.tasks="+self.reduce_num + \
-              "  -D mapred.job.name=mooncake_"+self.job_name + \
+              "  -D mapreduce.job.name=mooncake_"+self.job_name + \
+              "  -D mapreduce.job.reduces="+self.reduce_num + \
+              "  -D mapreduce.job.priority="+ self.job_priority + \
               "  -D mapreduce.reduce.memory.mb="+self.reduce_memory_limit +\
               "  -D mapreduce.map.memory.mb="+self.map_memory_limit +\
               "  -D mapreduce.output.fileoutputformat.compress=false" +\

@@ -122,8 +122,8 @@ class FeatureHasher():
 
       hash_key = self.__hash(str(key))
 
-    self.logger.debug("->key[%s] value[%s] / h_key[%s]->[%s] h_value[%s]->[%s]" % (
-                    key, value, key, hash_key, value, value))
+    #self.logger.debug("->key[%s] value[%s] / h_key[%s]->[%s] h_value[%s]->[%s]" % (
+    #                key, value, key, hash_key, value, value))
 
     return hash_key, value
 
@@ -193,7 +193,7 @@ class FeatureHasher():
 
     
     if self.debug:
-      self.logger.debug("%s" % msg)
+      #self.logger.debug("%s" % msg)
       if self.label not in self._stat:
         self._stat[self.label] = 0
       self._stat[self.label] += 1
