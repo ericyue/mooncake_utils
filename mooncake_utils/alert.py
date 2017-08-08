@@ -45,10 +45,11 @@ class Alert:
     self.default_channel = self.conf['slack']['default_channel']
     self.enable_log = False
 
-  def send(self, msg, channel = None, enable_slack = True, enable_mail = True):
+  def send(self, msg, channel = None, enable_slack = True, enable_mail = True, logger = False):
     if not channel:
       channel = self.default_channel
-    if self.enable_log:
+
+    if self.enable_log or logger:
       self.logger.info(msg)
 
     if self.enable_slack and enable_slack:
@@ -115,4 +116,4 @@ if __name__ == "__main__":
   except:
     channel = "#yy_online"
 
-  a.send_mail(msg, channel=channel)
+  a.send(msg, channel=channel)

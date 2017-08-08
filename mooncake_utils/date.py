@@ -23,11 +23,11 @@ def datediff(dt, base = None, unit = 'day'):
   if unit == "day":
     diff = delta.days
   elif unit == "hour":
-    diff = delta.seconds//3600
+    diff = delta.total_seconds()//3600
   elif unit == "minute":
-    diff = (delta.seconds//60)%60
+    diff = (delta.total_seconds()//60)
   elif unit == "second":
-    diff = delta.seconds
+    diff = delta.total_seconds()
   else:
     diff = None
 

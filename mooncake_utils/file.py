@@ -31,33 +31,6 @@ def rm_folder(path, debug = False):
     if not debug:
       os.remove(one)
 
-def glob2list(fn):
-  ret = []
-  if not fn: return ret
-
-  for path in fn:
-    ret += glob.glob(path)
-
-  return sorted(list(set(ret)))
-
-def glob2list_by_date(fn, date_col = None):
-  if not date_col:
-    raise Exception("specify date_col")
-
-  ret = []
-
-  for path in fn:
-    ret += glob.glob(path)
-
-  split_ = {}
-  for path in ret:
-    date_ = path.split("/")[date_col]
-    if date_ not in split_:
-      split_[date_] = []
-    split_[date_].append(path)
-
-  return sorted(split_.items(), key = lambda x: x[0]),split_
-
 def rglob(p):
   matches = []
   for root, dirnames, filenames in os.walk(p):
@@ -78,6 +51,4 @@ def safewrite(filename, content):
 
 
 if __name__ == "__main__":
-  s= glob2list_by_date(["/data3/yuebin/dataset/v2/*/*/part-0000*"], date_col = 5)
-  for i in s:
-    print i[0],i[1]
+  pass
