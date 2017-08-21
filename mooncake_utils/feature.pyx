@@ -2,15 +2,17 @@
 
 # @author Yue Bin ( hi.moonlight@gmail.com )
 # @date 2017-06-07
-from __future__ import print_function
 import os,sys
+import logging
 import json
 from mmh3 import hash as mmh3_hash
 from mooncake_utils.log import *
 from cityhash import CityHash32 as city_hash
 import random
 
-class FeatureHasher():
+from libc.stdlib cimport rand, RAND_MAX
+
+cdef class FeatureHasher:
   """
     一个简易的特征抽取框架
       
@@ -24,18 +26,25 @@ class FeatureHasher():
     :param use_col_index: 特征采用下标还是用哈希结果
 
   """
+  cdef int size, label, debug, print_collision, dense, use_col_index, positive_random_drop, negative_random_drop, __counter
+  cdef float positive_random_drop_ratio, negative_random_drop_ratio
+  cdef str hash_module
+  cdef dict ins,_stat,_collision,discretization
+  cdef set error_value
+  cdef object logger,_hashlib
+
   def __init__(self,
           size = 1000, hash_module = "mmh3",
-          debug = False, print_collision = False,
-          dense = False, use_col_index = False,
-          positive_random_drop = False, positive_random_drop_ratio = 0.0,
-          negative_random_drop = False, negative_random_drop_ratio = 0.0,
+          debug = 0, print_collision = 0,
+          dense = 0, use_col_index = 0,
+          positive_random_drop = 0, positive_random_drop_ratio = 0.0,
+          negative_random_drop = 0, negative_random_drop_ratio = 0.0,
           discretization = {}):
 
     self.discretization = discretization
     self.size = size
     self.debug = debug
-    self.logger = get_logger(name="fea", debug=debug, wrapper=False)
+    self.logger = get_logger(name="fea", debug=(debug == 1), wrapper=False)
     self.logger.info(json.dumps(self.discretization, indent=3))
 
     self._stat = {}
@@ -46,12 +55,12 @@ class FeatureHasher():
     
     self.positive_random_drop = positive_random_drop
     self.positive_random_drop_ratio = positive_random_drop_ratio
-
     self.negative_random_drop = negative_random_drop
     self.negative_random_drop_ratio = negative_random_drop_ratio
-    self.label = None
+
+    self.label = 0
     self.ins = {}
-    self.error_value = {"","-","\\N"}
+    self.error_value = set(["","-","\\N"])
 
     if hash_module == "mmh3":
       self._hashlib = mmh3_hash
@@ -60,18 +69,17 @@ class FeatureHasher():
     else:
       raise Exception("unknown hash function")
 
-  def put(self, key, value):
+  def put(self, str key, value):
     if self.check_valid(value):
       self.ins[key] = value
-      #self.logger.log(1, "add key[%s] val[%s]" % (key, self.ins[key]))
       return True
     else:
-      #self.logger.log(1, "not valid key[%s] val[%s]" % (key, value))
       return False
 
-  def __hash(self, obj):
+  cdef __hash(self, str obj):
+    cdef int ret
     ret = abs(self._hashlib(obj)) % self.size
-    if self.print_collision:
+    if self.print_collision == 1:
       if ret not in self._collision:
         self._collision[ret] = {}
       self._collision[ret][obj] = 1
@@ -79,9 +87,9 @@ class FeatureHasher():
     return ret
 
   def collision(self):
-    if not self.print_collision:
+    if not self.print_collision == 1:
       return
-    cnt = 0.0
+    cdef float cnt = 0.0
     for key in self._collision:
       if len(self._collision[key]) >1:
         cnt+=1
@@ -89,45 +97,36 @@ class FeatureHasher():
     self.logger.info("collision[%s] total[%s] rate[%.4f%%]" % (cnt,
                     len(self._collision), 100*cnt/len(self._collision)))
 
-  def string_hash(self, key, value):
-    h_key = "%s%s" % (key,value)
-    hash_value = self.__hash(h_key)
-    #self.logger.debug("->key[%s] value[%s] / h_key[%s]->[%s] h_value[%s]->[%s]" % (
-    #                key, value,h_key,hash_value,value,1))
+  cdef string_hash(self, str key, str value):
+    cdef str h_key = "%s%s" % (key,value)
+    cdef int hash_value = self.__hash(h_key)
 
-    if self.dense:
+    if self.dense == 1:
       return hash_value, hash_value
     else:
       return hash_value, 1
   
-  def __discretization(self, key, value):
-    flag = False
-    if key not in self.discretization:
-      return flag, key, value
-    bins = self.discretization[key]
-    ret = 0
+  cdef __discretization(self, str key, float value):
+    cdef list bins = self.discretization[key]
+    cdef int ret = 0
     for b in bins:
       if value >= b:
         ret += 1 
-    flag = True
-    return flag, key, str(ret)
+    return key, str(ret)
   
-  def number_hash(self, key, value):
-    if self.dense:
+  cdef number_hash(self, str key, float value):
+    if self.dense == 1:
       hash_key = key
     else:
-      flag, key, value = self.__discretization(key, value) 
-      if flag:
-        return self.string_hash(key, value)
-
-      hash_key = self.__hash(str(key))
-
-    #self.logger.debug("->key[%s] value[%s] / h_key[%s]->[%s] h_value[%s]->[%s]" % (
-    #                key, value, key, hash_key, value, value))
+      if key in self.discretization:
+        key, _str_value = self.__discretization(key, value) 
+        return self.string_hash(key, _str_value)
+      else:
+        raise Exception("2333")
 
     return hash_key, value
 
-  def check_valid(self, obj):
+  cdef check_valid(self, obj):
     if isinstance(obj,list) and len(obj) > 0:
       return True
     if obj == None or obj in self.error_value:
@@ -135,16 +134,16 @@ class FeatureHasher():
     else:
       return True
 
-  def single_hash(self, key, value, ret, index):
+  cdef single_hash(self, str key, value, dict ret, int index):
     if isinstance(value, str):
       h_key, h_val = self.string_hash(key, value)
-    elif isinstance(value, (int, float)):
-      if self.use_col_index:
+    elif isinstance(value, float):
+      if self.use_col_index == 1:
         h_key,h_val = index, value
       else:
         h_key,h_val = self.number_hash(key, value)
     else:
-      raise Exception("unknown")
+      raise Exception("unknown %s type %s" % (value,type(value)))
 
     ret[h_key] = h_val
 
@@ -156,19 +155,19 @@ class FeatureHasher():
 
   def init(self):
     self.ins = {}
-    self.label = None
+    self.label = 0
     self.__counter = 0
 
-  def set_label(self, value):
+  def set_label(self, int value):
     self.label = value
     
-    _g = random.uniform(0.0, 1.0)
+    cdef float _g = rand() / (RAND_MAX + 1.0)
      
-    if self.negative_random_drop and \
+    if self.negative_random_drop == 1 and \
       value <= 0 and \
       _g <= self.negative_random_drop_ratio:
         return False
-    if self.positive_random_drop and \
+    if self.positive_random_drop == 1 and \
       value > 0 and \
       _g <= self.positive_random_drop_ratio:
         return False
@@ -179,21 +178,21 @@ class FeatureHasher():
     if obj:
       self.ins = obj
 
-    ret = {}
-    for u in self.ins:
-      if isinstance(self.ins[u], (list, tuple)):
-        self.list_hash(u, self.ins[u], ret)
+    cdef dict ret = {}
+    cdef str msg
+
+    for k,v in self.ins.iteritems():
+      if isinstance(v, list):
+        self.list_hash(k, v, ret)
       else:
-        self.single_hash(u, self.ins[u], ret, 0)
+        self.single_hash(k, v, ret, 0)
 
-    if self.dense:
-      msg = self.dense_format(self.label, ret)
+    if self.dense == 1:
+      msg = self.dense_format(ret)
     else:
-      msg = self.format(self.label, ret)
+      msg = self.format(ret)
 
-    
-    if self.debug:
-      #self.logger.debug("%s" % msg)
+    if self.debug == 1:
       if self.label not in self._stat:
         self._stat[self.label] = 0
       self._stat[self.label] += 1
@@ -206,51 +205,24 @@ class FeatureHasher():
     for label in self._stat:
       self.logger.info("label[%s] ratio[%.4f%%]" % (label, (100*self._stat[label]/total)))
 
-  def dense_format(self, label, obj):
-    msg = ""
-    sort_obj = sorted(obj.items(), key = lambda x:x[0])
+  cdef dense_format(self,dict obj):
+    cdef msg = ""
+    cdef list sort_obj = sorted(obj.items(), key = lambda x:x[0])
 
     for i in sort_obj:
       msg += "%s " % (i[1])
 
-    if label != None:
-      msg = "%s %s" % (label, msg.rstrip(" "))
+    msg = "%s %s" % (self.label, msg.rstrip(" "))
     return msg
 
-  def format(self, label, obj):
-    #msg = ""
-    #for i in obj:
-    #  msg += "%s:%s " % (i,obj[i])
-    msg = ' '.join(['{}:{}'.format(k,v) for k,v in obj.iteritems()])
-    return "%s %s" % (label, msg)
+  cdef str format(self, dict obj):
+    cdef str msg = ' '.join(['{}:{}'.format(k,v) for k,v in obj.iteritems()])
+    return "%s %s" % (self.label, msg)
 
 if __name__ == "__main__":
   
-  #a={"name":"mooncake","age":12,"float":3.333,"nickname":"mooncake","-":"","__label__":343}
-  #b={"name":"moake","age":12,"float":5.333,"nickname":"moake","ffff":"","asdf":"-","vec":["23"]}
-  #c={"name":"moake","age":32,"float":5.33,"vec":["23","moon","-"]}
-  #d={"name":"moake2","age":32,"float":5.33,"vec":["23","moon","-"]}
-  #h={"name":"moake2","age":32,"float":5.33,"vec":[123.2,112.3,44.4]}
-
-  #h1={"__label__":1,"id":"394848222","vec":[123.2,112.3,44.4]}
-  #h2= {'w2v': [0.007911, -0.093373, -0.15307, -0.024283, -0.044193, 0.160349, -0.024016, 0.007423, 0.149864, 0.135744, 0.016073, 0.045109, -0.011489, -0.105786, 0.097938, -0.091035, 0.170713, 0.086309, -0.019482, -0.05405, -0.193355, -0.106077, -0.065943, 0.091179, 0.133637, -0.038045, 0.125531, 0.163907, -0.087991, 0.088282, 0.185405, -0.042518, -0.005262, 0.038919, 0.011682, 0.041738, -0.150831, 0.060612, 0.165593, -0.113252, 0.021496, -0.0505, 0.049408, -0.149098, -0.106122, 0.162164, 0.174148, 0.081231, -0.013936, -0.14077], 'uid': '66652331', 'zhuboid': '92677035', '__label__': 0}
-
-  #h4={'w2v': [-0.289897, -0.280452, -0.089623, 0.383446, -0.143555, -0.197646, -0.259489, -0.246846, -0.00203, 0.199725, 0.242156, -0.099511, 0.165036, 0.0781, 0.353059, 0.067087, -0.013154, -0.414995, -0.049902, -0.175679], 'user_w2v': [-0.006176, -0.016736, -0.001631, -0.144528, 0.137523, 0.022742, -0.105139, -0.088976, 0.030469, 0.197202, 0.306016, -0.102512, -0.009773, -0.03308, 0.079476, -0.195709, 0.021524, -0.177388, 0.052616, 0.14131], '__label__': 0}
-
-  #f = FeatureHasher(size=100000000, hash_module="city", 
-  #            print_collision=True, debug=True, dense=False,use_col_index =True)
-  #f.hash(a)
-  #f.hash(b)
-  #f.hash(c)
-  #f.hash(d)
-  #f.hash(h)
-  #f.hash(h1)
-  #f.hash(h2)
-  #f.collision()
-  #f.hash(h4)
-  
   f = FeatureHasher(size=100000000, hash_module="city", 
-              print_collision=True, debug=True, dense=False,use_col_index =False,
+              print_collision=0, debug=1, dense=0,use_col_index = 0,
           discretization = {
               "u_fav":[0,100,300,1000,5000,10000,100000],
               "u_reg":[0,30,60,120,180,365,720]

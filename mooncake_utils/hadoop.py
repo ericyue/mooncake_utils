@@ -222,17 +222,16 @@ class Hadoop:
     status, text= run_cmd_noblock("%s fs -ls %s" % (self.hadoop_bin_path,path))
     lines = text.split("\n")
     ret = []
-    #for line in lines[-limit:]:
-    #  if line.find("done")!=-1:
-    #    continue
-    #  ret.append(line.split(" ")[-1])
    
     for line in reversed(lines):
       if limit <=0:
         break
       if line.find("done")!=-1:
         continue
-      ret.append(line.split(" ")[-1])
+      items = line.split(" ")
+      if len(items) <4:
+        continue
+      ret.append(items[-1])
       limit = limit - 1
   
     return ret
@@ -244,6 +243,26 @@ class Hadoop:
   def getmerge_to_local(self, src, dest):
       cmd = "%s fs -getmerge %s %s " %(self.hadoop_bin_path, src, dest)
       return run_cmd(cmd)
+
+def hdfs_latest_path(path = "/tmp/warehouse/consume/", limit = 3):
+  status, text= run_cmd_noblock("/usr/local/livers/hadoop/bin/hadoop fs -ls %s" % (path))
+  lines = text.split("\n")
+  ret = []
+
+  for line in reversed(lines):
+    if limit <=0:
+      break
+    if line.find("done")!=-1:
+      continue
+    items = line.split(" ")
+    if len(items) <4:
+      continue
+    ret.append(items[-1])
+    limit = limit - 1
+
+  return ret
+
+
 
 if __name__ == "__main__":
   #s.run()

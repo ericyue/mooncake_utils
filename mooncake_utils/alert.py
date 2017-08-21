@@ -116,4 +116,4 @@ if __name__ == "__main__":
   except:
     channel = "#yy_online"
 
-  a.send(msg, channel=channel)
+  a.send(msg, channel=channel,logger=True)

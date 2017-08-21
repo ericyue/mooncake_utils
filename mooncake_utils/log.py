@@ -82,6 +82,7 @@ class LogWrapper():
 
 if __name__ == "__main__":
   logger = get_logger(debug = True, name = "mooncake_utils", level=3)
+  print logger
   logger.info("mooncake's a good guy!")
   #try:
   #  raise Exception("ffff")
