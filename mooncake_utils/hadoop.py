@@ -252,8 +252,9 @@ def hdfs_latest_path(path = "/tmp/warehouse/consume/", limit = 3):
   for line in reversed(lines):
     if limit <=0:
       break
-    if line.find("done")!=-1:
+    if line.find("done")!=-1 or line.find("_temporary")!=-1:
       continue
+    print "========",line
     items = line.split(" ")
     if len(items) <4:
       continue
