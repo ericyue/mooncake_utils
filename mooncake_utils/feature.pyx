@@ -69,6 +69,9 @@ cdef class FeatureHasher:
     else:
       raise Exception("unknown hash function")
 
+  def get_ins(self):
+    return self.ins
+
   def put(self, str key, value):
     if self.check_valid(value):
       self.ins[key] = value
@@ -137,6 +140,7 @@ cdef class FeatureHasher:
   cdef single_hash(self, str key, value, dict ret, int index):
     if isinstance(value, str):
       h_key, h_val = self.string_hash(key, value)
+      #print key, value,h_key, h_val
     elif isinstance(value, float):
       if self.use_col_index == 1:
         h_key,h_val = index, value

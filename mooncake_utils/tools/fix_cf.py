@@ -20,18 +20,25 @@ if __name__ == "__main__":
 
       for line in iter(map.readline, ""):
         if line[-1] == "\n":
-          key,value = line.strip().split('\x01')
+          try:
+            key,value = line.strip().split('\x01')
+          except:
+            bad+=1
+            continue
+            
           new_value = ""
           v_items = value.split(',')
+          v_cnt = 0
           for v in v_items:
             try:
               int(v.split(':')[0])
               new_value += "%s," % v
+              v_cnt+=1
             except Exception,w:
-              print w,line
+              print w,"/",v.split(':')[0],"/",line
               continue
-
-          output.write("%s\x01%s\n" % (key,new_value.rstrip(',')))
+          if v_cnt >0:
+            output.write("%s\x01%s\n" % (key,new_value.rstrip(',')))
         else:
           bad +=1
           print "badline #%s" % bad
