@@ -104,6 +104,8 @@ class Hadoop:
         command += "  %s  " % extra_cmd
       command += "  -D mapred.job.map.capacity=100" +\
               "  -D mapred.job.reduce.capacity=100"+\
+              "  -D mapred.min.split.size=1024000000"+\
+              "  -D yarn.nodemanager.sleep-delay-before-sigkill.ms=240000" +\
               "  -D mapreduce.job.name=mooncake_"+self.job_name + \
               "  -D mapreduce.job.reduces="+self.reduce_num + \
               "  -D mapreduce.job.priority="+ self.job_priority + \
@@ -154,7 +156,7 @@ class Hadoop:
 
       else:
         if need_alert:
-          self.alert.send("hadoop job faild [%s]" % self.job_name,channel="#hadoop-job")
+          self.alert.send("hadoop job faild [%s]" % self.job_name,channel="#litb_hadoop")
         cprint("hadoop job faild",'red', attrs=['bold'], file=sys.stderr)
   
       return ret
