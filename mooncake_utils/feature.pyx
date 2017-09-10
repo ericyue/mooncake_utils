@@ -125,7 +125,7 @@ cdef class FeatureHasher:
         key, _str_value = self.__discretization(key, value) 
         return self.string_hash(key, _str_value)
       else:
-        raise Exception("2333")
+        raise Exception("2333 %s" % key)
 
     return hash_key, value
 
@@ -147,7 +147,7 @@ cdef class FeatureHasher:
       else:
         h_key,h_val = self.number_hash(key, value)
     else:
-      raise Exception("unknown %s type %s" % (value,type(value)))
+      raise Exception("unknown %s type %s k:%s v:%s" % (value,type(value),key,value))
 
     ret[h_key] = h_val
 
@@ -162,9 +162,10 @@ cdef class FeatureHasher:
     self.label = 0
     self.__counter = 0
 
-  def set_label(self, int value):
+  def set_label(self, int value, force = False):
     self.label = value
-    
+    if force:
+      return True
     cdef float _g = rand() / (RAND_MAX + 1.0)
      
     if self.negative_random_drop == 1 and \

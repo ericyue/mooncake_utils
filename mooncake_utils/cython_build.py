@@ -23,8 +23,8 @@ def build_pyx(to_build = [], delete = False):
   setarg(1, 'build_ext')
   setarg(2, '--build-lib=./lib/')
 
-
   for one in to_build:
+    print one
     setup(ext_modules = cythonize(one))
     if delete:
       run_cmd('rm -rf %s' % one.replace('pyx','c'))

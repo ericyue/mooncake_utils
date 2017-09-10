@@ -27,6 +27,8 @@ if __name__ == "__main__":
             continue
             
           new_value = ""
+          if value.strip()=="":
+            continue
           v_items = value.split(',')
           v_cnt = 0
           for v in v_items:
