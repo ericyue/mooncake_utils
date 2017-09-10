@@ -155,7 +155,7 @@ class Hadoop:
 
       else:
         if need_alert:
-          self.alert.send("hadoop job faild [%s]" % self.job_name,channel="#hadoop-job")
+          self.alert.send("hadoop job faild [%s]" % self.job_name,channel="#litb_hadoop")
         cprint("hadoop job faild",'red', attrs=['bold'], file=sys.stderr)
   
       return ret

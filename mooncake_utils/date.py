@@ -33,7 +33,7 @@ def datediff(dt, base = None, unit = 'day'):
 
   return diff
 
-def gen_date_list_by_days(begin = None, days=7, join = False,  exclude = [], include_begin_day = False):
+def gen_date_list_by_days(begin = None, days=7, join = False,  exclude = [], include_begin_day = False, format='%Y%m%d'):
   """
     生成指定的时间list
 
@@ -69,7 +69,7 @@ def gen_date_list_by_days(begin = None, days=7, join = False,  exclude = [], inc
   ret = []
   for i in range(days):
     dt = begin - datetime.timedelta(i + delta_inc)
-    dt = dt.strftime('%Y%m%d')
+    dt = dt.strftime(format)
     if dt in exclude:
       continue
     ret.append(dt) 
