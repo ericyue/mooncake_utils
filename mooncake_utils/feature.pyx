@@ -26,11 +26,11 @@ cdef class FeatureHasher:
     :param use_col_index: 特征采用下标还是用哈希结果
 
   """
-  cdef int size, label, debug, print_collision, dense, use_col_index, positive_random_drop, negative_random_drop, __counter
+  cdef int size, label, debug, print_collision, dense, use_col_index, positive_random_drop, negative_random_drop
   cdef float positive_random_drop_ratio, negative_random_drop_ratio
   cdef str hash_module
-  cdef dict ins,_stat,_collision,discretization
-  cdef set error_value
+  cdef dict _stat,_collision,discretization
+  cdef set error_value,final,ins
   cdef object logger,_hashlib
 
   def __init__(self,
@@ -59,7 +59,8 @@ cdef class FeatureHasher:
     self.negative_random_drop_ratio = negative_random_drop_ratio
 
     self.label = 0
-    self.ins = {}
+    self.ins = set()
+    self.final = set()
     self.error_value = set(["","-","\\N"])
 
     if hash_module == "mmh3":
@@ -72,63 +73,13 @@ cdef class FeatureHasher:
   def get_ins(self):
     return self.ins
 
-  def put(self, str key, value):
+  def put(self, str key, str value):
     if self.check_valid(value):
-      self.ins[key] = value
+      self.ins.add("%s%s" % (key,value))
       return True
     else:
       return False
-
-  cdef __hash(self, str obj):
-    cdef int ret
-    ret = abs(self._hashlib(obj)) % self.size
-    if self.print_collision == 1:
-      if ret not in self._collision:
-        self._collision[ret] = {}
-      self._collision[ret][obj] = 1
-
-    return ret
-
-  def collision(self):
-    if not self.print_collision == 1:
-      return
-    cdef float cnt = 0.0
-    for key in self._collision:
-      if len(self._collision[key]) >1:
-        cnt+=1
-
-    self.logger.info("collision[%s] total[%s] rate[%.4f%%]" % (cnt,
-                    len(self._collision), 100*cnt/len(self._collision)))
-
-  cdef string_hash(self, str key, str value):
-    cdef str h_key = "%s%s" % (key,value)
-    cdef int hash_value = self.__hash(h_key)
-
-    if self.dense == 1:
-      return hash_value, hash_value
-    else:
-      return hash_value, 1
   
-  cdef __discretization(self, str key, float value):
-    cdef list bins = self.discretization[key]
-    cdef int ret = 0
-    for b in bins:
-      if value >= b:
-        ret += 1 
-    return key, str(ret)
-  
-  cdef number_hash(self, str key, float value):
-    if self.dense == 1:
-      hash_key = key
-    else:
-      if key in self.discretization:
-        key, _str_value = self.__discretization(key, value) 
-        return self.string_hash(key, _str_value)
-      else:
-        raise Exception("2333 %s" % key)
-
-    return hash_key, value
-
   cdef check_valid(self, obj):
     if isinstance(obj,list) and len(obj) > 0:
       return True
@@ -137,91 +88,38 @@ cdef class FeatureHasher:
     else:
       return True
 
-  cdef single_hash(self, str key, value, dict ret, int index):
-    if isinstance(value, str):
-      h_key, h_val = self.string_hash(key, value)
-      #print key, value,h_key, h_val
-    elif isinstance(value, float):
-      if self.use_col_index == 1:
-        h_key,h_val = index, value
-      else:
-        h_key,h_val = self.number_hash(key, value)
-    else:
-      raise Exception("unknown %s type %s k:%s v:%s" % (value,type(value),key,value))
-
-    ret[h_key] = h_val
-
-  def list_hash(self, key, obj, ret):
-    for item in obj:
-      self.single_hash("%s_%s" % (self.__counter, key), 
-                          item, ret, self.__counter)
-      self.__counter += 1
-
   def init(self):
-    self.ins = {}
+    self.ins.clear()
+    self.final.clear()
     self.label = 0
-    self.__counter = 0
 
   def set_label(self, int value, force = False):
     self.label = value
     if force:
       return True
-    cdef float _g = rand() / (RAND_MAX + 1.0)
-     
-    if self.negative_random_drop == 1 and \
-      value <= 0 and \
-      _g <= self.negative_random_drop_ratio:
-        return False
-    if self.positive_random_drop == 1 and \
-      value > 0 and \
-      _g <= self.positive_random_drop_ratio:
-        return False
+    #cdef float _g = rand() / (RAND_MAX + 1.0)
+    # 
+    #if self.negative_random_drop == 1 and \
+    #  value <= 0 and \
+    #  _g <= self.negative_random_drop_ratio:
+    #    return False
+    #if self.positive_random_drop == 1 and \
+    #  value > 0 and \
+    #  _g <= self.positive_random_drop_ratio:
+    #    return False
 
     return True
+  cdef string_hash(self, str key):
+    cdef int hash_value = abs(self._hashlib(key)) % self.size
+    self.final.add(hash_value)
 
-  def hash(self, obj = None):
-    if obj:
-      self.ins = obj
+  def hash(self):
+    for k in self.ins:
+        self.string_hash(k)
+    return self.format()
 
-    cdef dict ret = {}
-    cdef str msg
-
-    for k,v in self.ins.iteritems():
-      if isinstance(v, list):
-        self.list_hash(k, v, ret)
-      else:
-        self.single_hash(k, v, ret, 0)
-
-    if self.dense == 1:
-      msg = self.dense_format(ret)
-    else:
-      msg = self.format(ret)
-
-    if self.debug == 1:
-      if self.label not in self._stat:
-        self._stat[self.label] = 0
-      self._stat[self.label] += 1
-    
-    return msg
-
-  def stat(self):
-    self.logger.info(self._stat)
-    total = float(sum(self._stat.values()))
-    for label in self._stat:
-      self.logger.info("label[%s] ratio[%.4f%%]" % (label, (100*self._stat[label]/total)))
-
-  cdef dense_format(self,dict obj):
-    cdef msg = ""
-    cdef list sort_obj = sorted(obj.items(), key = lambda x:x[0])
-
-    for i in sort_obj:
-      msg += "%s " % (i[1])
-
-    msg = "%s %s" % (self.label, msg.rstrip(" "))
-    return msg
-
-  cdef str format(self, dict obj):
-    cdef str msg = ' '.join(['{}:{}'.format(k,v) for k,v in obj.iteritems()])
+  cdef str format(self):
+    cdef str msg = ' '.join(['{}:1'.format(k) for k in self.final])
     return "%s %s" % (self.label, msg)
 
 if __name__ == "__main__":

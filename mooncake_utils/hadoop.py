@@ -25,11 +25,11 @@ class Hadoop:
   conf = ConfigParser.ConfigParser({})
   run_date = None
 
-  def __init__(self,run_date , conf_path = "./conf/hadoop.conf"):
+  def __init__(self,run_date, conf_path = "./conf/hadoop.conf", job_suffix=""):
     cprint("begin init Hadoop using [%s]" % conf_path)
     self.conf.read(conf_path)
     self.run_date = run_date
-    self.load_conf()
+    self.load_conf(job_suffix)
     self.alert = Alert()
     print "jobname_base [%s]" % self.job_name 
 
@@ -44,8 +44,9 @@ class Hadoop:
     return input_base % (','.join(ret))
 
 
-  def load_conf(self):
-    self.job_name_base =  ABSPATH.split("/")[-1].strip()
+  def load_conf(self, job_suffix = ""):
+    self.job_name_base =  ABSPATH.split("/")[-1].strip()+job_suffix
+
     self.mapper_file_name = "map.py"
     self.reducer_file_name = "reduce.py"
 
@@ -155,7 +156,7 @@ class Hadoop:
 
       else:
         if need_alert:
-          self.alert.send("hadoop job faild [%s]" % self.job_name,channel="#litb_hadoop")
+          self.alert.send("hadoop job faild [%s]" % self.job_name,channel="#yy_hadoop")
         cprint("hadoop job faild",'red', attrs=['bold'], file=sys.stderr)
   
       return ret
