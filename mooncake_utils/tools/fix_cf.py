@@ -28,6 +28,7 @@ if __name__ == "__main__":
             
           new_value = ""
           if value.strip()=="":
+            bad+=1
             continue
           v_items = value.split(',')
           v_cnt = 0
@@ -38,6 +39,7 @@ if __name__ == "__main__":
               v_cnt+=1
             except Exception,w:
               print w,"/",v.split(':')[0],"/",line
+              bad+=1
               continue
           if v_cnt >0:
             output.write("%s\x01%s\n" % (key,new_value.rstrip(',')))

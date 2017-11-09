@@ -75,7 +75,7 @@ cdef class FeatureHasher:
 
   def put(self, str key, str value):
     if self.check_valid(value):
-      self.ins.add("%s%s" % (key,value))
+      self.ins.add("%s-%s" % (key,value))
       return True
     else:
       return False

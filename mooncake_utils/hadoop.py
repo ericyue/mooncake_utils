@@ -156,7 +156,7 @@ class Hadoop:
 
       else:
         if need_alert:
-          self.alert.send("hadoop job faild [%s]" % self.job_name,channel="#yy_hadoop")
+          self.alert.send("hadoop job faild [%s]" % self.job_name,channel="#litb_hadoop")
         cprint("hadoop job faild",'red', attrs=['bold'], file=sys.stderr)
   
       return ret
@@ -246,8 +246,8 @@ class Hadoop:
       cmd = "%s fs -getmerge %s %s " %(self.hadoop_bin_path, src, dest)
       return run_cmd(cmd)
 
-def hdfs_latest_path(path = "/tmp/warehouse/consume/", limit = 3):
-  status, text= run_cmd_noblock("/usr/local/livers/hadoop/bin/hadoop fs -ls %s" % (path))
+def hdfs_latest_path(path = "/tmp/warehouse/consume/", limit = 3, cmd_base = "/usr/local/livers/hadoop/bin/hadoop"):
+  status, text= run_cmd_noblock("%s fs -ls %s" % (cmd_base,path))
   lines = text.split("\n")
   ret = []
 
