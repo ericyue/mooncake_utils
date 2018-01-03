@@ -105,7 +105,6 @@ class Hadoop:
         command += "  %s  " % extra_cmd
       command += "  -D mapred.job.map.capacity=100" +\
               "  -D mapred.job.reduce.capacity=100"+\
-              "  -D mapred.min.split.size=6000000000"+\
               "  -D mapreduce.job.name=mooncake_"+self.job_name + \
               "  -D mapreduce.job.reduces="+self.reduce_num + \
               "  -D mapreduce.job.priority="+ self.job_priority + \
@@ -156,7 +155,7 @@ class Hadoop:
 
       else:
         if need_alert:
-          self.alert.send("hadoop job faild [%s]" % self.job_name,channel="#litb_hadoop")
+          self.alert.send("hadoop job faild [%s]" % self.job_name,channel="#zuiyou_recsys")
         cprint("hadoop job faild",'red', attrs=['bold'], file=sys.stderr)
   
       return ret
@@ -254,7 +253,7 @@ def hdfs_latest_path(path = "/tmp/warehouse/consume/", limit = 3, cmd_base = "/u
   for line in reversed(lines):
     if limit <=0:
       break
-    if line.find("done")!=-1 or line.find("_temporary")!=-1:
+    if line.find("done")!=-1 or line.find("_temporary")!=-1 or line.find("_COPYING_")!=-1:
       continue
     print "========",line
     items = line.split(" ")

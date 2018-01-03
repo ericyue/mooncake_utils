@@ -16,7 +16,7 @@ if __name__ == "__main__":
         map = mmap.mmap(f.fileno(), 0, prot=mmap.PROT_READ)
       except Exception,w:
         print w
-        exit()
+        exit(1111)
 
       for line in iter(map.readline, ""):
         if line[-1] == "\n":
