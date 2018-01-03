@@ -5,6 +5,7 @@
 import os,sys
 import logging
 import json
+from farmhash import hash64 as farm_hash
 from mmh3 import hash as mmh3_hash
 from mooncake_utils.log import *
 from cityhash import CityHash32 as city_hash
@@ -34,7 +35,7 @@ cdef class FeatureHasher:
   cdef object logger,_hashlib
 
   def __init__(self,
-          size = 1000, hash_module = "mmh3",
+          size = 1000, hash_module = "farm",
           debug = 0, print_collision = 0,
           dense = 0, use_col_index = 0,
           positive_random_drop = 0, positive_random_drop_ratio = 0.0,
@@ -67,6 +68,8 @@ cdef class FeatureHasher:
       self._hashlib = mmh3_hash
     elif hash_module == "city":
       self._hashlib = city_hash
+    elif hash_module == "farm":
+      self._hashlib = farm_hash
     else:
       raise Exception("unknown hash function")
 
