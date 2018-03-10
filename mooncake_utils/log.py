@@ -2,7 +2,6 @@ import logging
 from mooncake_utils.file import mkdirp
 import os,sys
 from logging.handlers import TimedRotatingFileHandler,RotatingFileHandler
-
 logbase = os.path.dirname(os.path.abspath(sys.argv[0])) + '/log/'
 
 def get_logger(
