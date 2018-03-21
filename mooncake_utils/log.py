@@ -26,6 +26,8 @@ def get_logger(
       _level=logging.INFO
   
   logger = logging.getLogger(name)
+  if len(logger.handlers) > 0:
+    return logger
   if not level:
     logger.setLevel(_level)
   else:
