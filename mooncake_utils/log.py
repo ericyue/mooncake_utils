@@ -5,7 +5,7 @@ from logging.handlers import TimedRotatingFileHandler,RotatingFileHandler
 logbase = os.path.dirname(os.path.abspath(sys.argv[0])) + '/log/'
 
 def get_logger(
-          debug = True, 
+          debug = False, 
           name = "mu.log",
           with_file = False,
           level = None, wrapper = False):
