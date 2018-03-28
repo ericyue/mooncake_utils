@@ -7,7 +7,7 @@
 # @version 0.0.1
 from distutils.core import setup
 
-V = "0.4"
+V = "0.5"
 
 setup(
   name = 'mooncake_utils',

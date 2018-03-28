@@ -47,8 +47,8 @@ def get_logger(
     logpath = logbase
     
   if with_file:
-    mkdirp(logbase)
-    log_file = logbase + "%s.log" % name
+    mkdirp(logpath)
+    log_file = logpath + "/%s.log" % name
     file_handler = TimedRotatingFileHandler(
                         log_file,
                         "midnight", 1, 30,
