@@ -2,13 +2,17 @@ import logging
 from mooncake_utils.file import mkdirp
 import os,sys
 from logging.handlers import TimedRotatingFileHandler,RotatingFileHandler
+
 logbase = os.path.dirname(os.path.abspath(sys.argv[0])) + '/log/'
 
 def get_logger(
           debug = False, 
           name = "mu.log",
           with_file = False,
-          level = None, wrapper = False, formatter_str = '%(threadName)s | %(asctime)s - %(levelname)s - <%(filename)s-%(funcName)s:%(lineno)d> : %(message)s'):
+          level = None, wrapper = False,
+          formatter_str = '%(threadName)s | %(asctime)s - %(levelname)s - <%(filename)s-%(funcName)s:%(lineno)d> : %(message)s',
+          log_save_path = None):
+
   """get_logger
 
   :param debug:
@@ -36,7 +40,12 @@ def get_logger(
   console_handler = logging.StreamHandler()
   console_handler.setFormatter(formatter)
   logger.addHandler(console_handler)
-  
+
+  if log_save_path:
+    logpath = log_save_path
+  else:
+    logpath = logbase
+    
   if with_file:
     mkdirp(logbase)
     log_file = logbase + "%s.log" % name
@@ -46,9 +55,9 @@ def get_logger(
                         None, True)
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
-    logger.info("add file_hander to logger {}".format(log_file))
+    logger.debug("add file_hander to logger {}".format(log_file))
 
-  logger.info("init logger success [{}]".format(name))
+  logger.debug("init logger success [{}]".format(name))
   if not wrapper:
     return logger
   return LogWrapper(logger)
