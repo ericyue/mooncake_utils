@@ -8,7 +8,7 @@ def get_logger(
           debug = False, 
           name = "mu.log",
           with_file = False,
-          level = None, wrapper = False):
+          level = None, wrapper = False, formatter_str = '%(threadName)s | %(asctime)s - %(levelname)s - <%(filename)s-%(funcName)s:%(lineno)d> : %(message)s'):
   """get_logger
 
   :param debug:
@@ -18,7 +18,8 @@ def get_logger(
 
   if name == None or name == "":
     return None
-  formatter = logging.Formatter('%(threadName)s | %(asctime)s - %(levelname)s - <%(filename)s-%(funcName)s:%(lineno)d> : %(message)s')
+  
+  formatter = logging.Formatter(formatter_str)
   if debug:
       _level=logging.DEBUG
   else:
@@ -82,9 +83,9 @@ class LogWrapper():
     self.logger.exception(self.sep.join("{}".format(a) for a in args))
 
 if __name__ == "__main__":
-  logger = get_logger(debug = True, name = "mooncake_utils", level=3)
+  logger = get_logger(name = "mooncake_utils")
   print logger
-  logger.info("mooncake's a good guy!")
+  logger.debug("mooncake's a good guy!")
   #try:
   #  raise Exception("ffff")
   #except Exception: 
