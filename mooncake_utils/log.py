@@ -16,7 +16,7 @@ def get_logger(
           level = None, wrapper = False,
           formatter_str = '%(threadName)s | %(asctime)s - %(levelname)s - <%(filename)s-%(funcName)s:%(lineno)d> : %(message)s',
           log_save_path = None,
-          with_kafka = False, kafka_topic = None, kafka_hosts = None):
+          with_kafka = False, kafka_topic = None, kafka_hosts = None, kafka_api_version = (0, 10)):
 
   """get_logger
 
@@ -60,7 +60,7 @@ def get_logger(
     logger.debug("add file_hander to logger {}".format(log_file))
 
   if with_kafka:
-    kfk = KafkaLoggingHandler(kafka_hosts, kafka_topic)
+    kfk = KafkaLoggingHandler(kafka_hosts, kafka_topic, kafka_api_version)
     kfk.setFormatter(formatter)
     logger.addHandler(kfk)
 
@@ -101,12 +101,12 @@ class LogWrapper():
 
 class KafkaLoggingHandler(logging.Handler):
     producer = None
-    def __init__(self, hosts_list, topic, **kwargs):
+    def __init__(self, hosts_list, topic, kafka_api_version):
         logging.Handler.__init__(self)
 
-        #self.key = kwargs.get("key", None)
         self.kafka_topic_name = topic
-        self.producer = KafkaProducer(bootstrap_servers = 'mooncake.im:9092', api_version = (0, 10))
+        self.producer = KafkaProducer(bootstrap_servers = hosts_list,
+                            api_version = kafka_api_version)
 
     def emit(self, record):
         if record.name == 'kafka':
@@ -126,7 +126,6 @@ class KafkaLoggingHandler(logging.Handler):
         if self.producer is not None:
             self.producer.close()
         logging.Handler.close(self)
-
 
 if __name__ == "__main__":
   logger = get_logger(name = "mooncake_utils")
