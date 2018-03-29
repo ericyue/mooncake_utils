@@ -2,6 +2,9 @@ import logging
 from mooncake_utils.file import mkdirp
 import os,sys
 from logging.handlers import TimedRotatingFileHandler,RotatingFileHandler
+from kafka.client import KafkaClient
+from kafka.producer import SimpleProducer, KeyedProducer
+from kafka.conn import DEFAULT_SOCKET_TIMEOUT_SECONDS
 
 logbase = os.path.dirname(os.path.abspath(sys.argv[0])) + '/log/'
 
@@ -91,20 +94,43 @@ class LogWrapper():
   def exception(self, *args):
     self.logger.exception(self.sep.join("{}".format(a) for a in args))
 
+class KafkaLoggingHandler(logging.Handler):
+    def __init__(self, hosts_list, topic, timeout_secs=DEFAULT_SOCKET_TIMEOUT_SECONDS, **kwargs):
+        logging.Handler.__init__(self)
+
+        self.kafka_client = KafkaClient(hosts_list, timeout=timeout_secs)
+        self.key = kwargs.get("key", None)
+        self.kafka_topic_name = topic
+
+        if not self.key:
+            self.producer = SimpleProducer(self.kafka_client, **kwargs)
+        else:
+            self.producer = KeyedProducer(self.kafka_client, **kwargs)
+
+    def emit(self, record):
+        if record.name == 'kafka':
+            return
+        try:
+            msg = self.format(record)
+            if isinstance(msg, unicode):
+                msg = msg.encode("utf-8")
+
+            if not self.key:
+                self.producer.send_messages(self.kafka_topic_name, msg)
+            else:
+                self.producer.send_messages(self.kafka_topic_name, self.key, msg)
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except:
+            self.handleError(record)
+
+    def close(self):
+        if self.producer is not None:
+            self.producer.stop()
+        logging.Handler.close(self)
+
+
 if __name__ == "__main__":
   logger = get_logger(name = "mooncake_utils")
   print logger
   logger.debug("mooncake's a good guy!")
-  #try:
-  #  raise Exception("ffff")
-  #except Exception: 
-  #  logger.exception("23333")
-
-  #l = logger
-  #l.info("dsf","aaa","123")
-  #l.set_sep("#")
-  #l.info("dsf","aaa","123")
-  #l.debug("dsf","aaa","123")
-  #l.log(3,"2333333333dsf","aaa","123")
-  #l.exception('23333')
-
