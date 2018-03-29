@@ -1,10 +1,11 @@
+#coding=utf-8
 import logging
 from mooncake_utils.file import mkdirp
 import os,sys
 from logging.handlers import TimedRotatingFileHandler,RotatingFileHandler
-from kafka.client import KafkaClient
-from kafka.producer import SimpleProducer, KeyedProducer
-from kafka.conn import DEFAULT_SOCKET_TIMEOUT_SECONDS
+from kafka.client import SimpleClient
+from kafka.producer import KafkaProducer
+import logging
 
 logbase = os.path.dirname(os.path.abspath(sys.argv[0])) + '/log/'
 
@@ -14,7 +15,8 @@ def get_logger(
           with_file = False,
           level = None, wrapper = False,
           formatter_str = '%(threadName)s | %(asctime)s - %(levelname)s - <%(filename)s-%(funcName)s:%(lineno)d> : %(message)s',
-          log_save_path = None):
+          log_save_path = None,
+          with_kafka = False, kafka_topic = None, kafka_hosts = None):
 
   """get_logger
 
@@ -23,9 +25,6 @@ def get_logger(
   :param with_file:
   """
 
-  if name == None or name == "":
-    return None
-  
   formatter = logging.Formatter(formatter_str)
   if debug:
       _level=logging.DEBUG
@@ -59,6 +58,11 @@ def get_logger(
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
     logger.debug("add file_hander to logger {}".format(log_file))
+
+  if with_kafka:
+    kfk = KafkaLoggingHandler(kafka_hosts, kafka_topic)
+    kfk.setFormatter(formatter)
+    logger.addHandler(kfk)
 
   logger.debug("init logger success [{}]".format(name))
   if not wrapper:
@@ -94,18 +98,15 @@ class LogWrapper():
   def exception(self, *args):
     self.logger.exception(self.sep.join("{}".format(a) for a in args))
 
+
 class KafkaLoggingHandler(logging.Handler):
-    def __init__(self, hosts_list, topic, timeout_secs=DEFAULT_SOCKET_TIMEOUT_SECONDS, **kwargs):
+    producer = None
+    def __init__(self, hosts_list, topic, **kwargs):
         logging.Handler.__init__(self)
 
-        self.kafka_client = KafkaClient(hosts_list, timeout=timeout_secs)
-        self.key = kwargs.get("key", None)
+        #self.key = kwargs.get("key", None)
         self.kafka_topic_name = topic
-
-        if not self.key:
-            self.producer = SimpleProducer(self.kafka_client, **kwargs)
-        else:
-            self.producer = KeyedProducer(self.kafka_client, **kwargs)
+        self.producer = KafkaProducer(bootstrap_servers = 'mooncake.im:9092', api_version = (0, 10))
 
     def emit(self, record):
         if record.name == 'kafka':
@@ -115,10 +116,7 @@ class KafkaLoggingHandler(logging.Handler):
             if isinstance(msg, unicode):
                 msg = msg.encode("utf-8")
 
-            if not self.key:
-                self.producer.send_messages(self.kafka_topic_name, msg)
-            else:
-                self.producer.send_messages(self.kafka_topic_name, self.key, msg)
+            self.producer.send(self.kafka_topic_name, msg)
         except (KeyboardInterrupt, SystemExit):
             raise
         except:
@@ -126,11 +124,10 @@ class KafkaLoggingHandler(logging.Handler):
 
     def close(self):
         if self.producer is not None:
-            self.producer.stop()
+            self.producer.close()
         logging.Handler.close(self)
 
 
 if __name__ == "__main__":
   logger = get_logger(name = "mooncake_utils")
-  print logger
   logger.debug("mooncake's a good guy!")
