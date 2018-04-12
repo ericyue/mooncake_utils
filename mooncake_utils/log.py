@@ -16,6 +16,7 @@ def get_logger(
           level = None, wrapper = False,
           formatter_str = '%(threadName)s | %(asctime)s - %(levelname)s - <%(filename)s-%(funcName)s:%(lineno)d> : %(message)s',
           log_save_path = None,
+          with_console = True,
           with_kafka = False, kafka_topic = None, kafka_hosts = None, kafka_api_version = (0, 10)):
 
   """get_logger
@@ -38,10 +39,11 @@ def get_logger(
     logger.setLevel(_level)
   else:
     logger.setLevel(level)
-  
-  console_handler = logging.StreamHandler()
-  console_handler.setFormatter(formatter)
-  logger.addHandler(console_handler)
+
+  if with_console: 
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
 
   if log_save_path:
     logpath = log_save_path
