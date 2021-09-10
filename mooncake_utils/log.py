@@ -3,8 +3,8 @@ import logging
 from mooncake_utils.file import mkdirp
 import os,sys
 from logging.handlers import TimedRotatingFileHandler,RotatingFileHandler
-from kafka.client import SimpleClient
-from kafka.producer import KafkaProducer
+#from kafka.client import SimpleClient
+#from kafka.producer import KafkaProducer
 import logging
 
 logbase = os.path.dirname(os.path.abspath(sys.argv[0])) + '/log/'
@@ -101,33 +101,33 @@ class LogWrapper():
     self.logger.exception(self.sep.join("{}".format(a) for a in args))
 
 
-class KafkaLoggingHandler(logging.Handler):
-    producer = None
-    def __init__(self, hosts_list, topic, kafka_api_version):
-        logging.Handler.__init__(self)
-
-        self.kafka_topic_name = topic
-        self.producer = KafkaProducer(bootstrap_servers = hosts_list,
-                            api_version = kafka_api_version)
-
-    def emit(self, record):
-        if record.name == 'kafka':
-            return
-        try:
-            msg = self.format(record)
-            if isinstance(msg, unicode):
-                msg = msg.encode("utf-8")
-
-            self.producer.send(self.kafka_topic_name, msg)
-        except (KeyboardInterrupt, SystemExit):
-            raise
-        except:
-            self.handleError(record)
-
-    def close(self):
-        if self.producer is not None:
-            self.producer.close()
-        logging.Handler.close(self)
+#class KafkaLoggingHandler(logging.Handler):
+#    producer = None
+#    def __init__(self, hosts_list, topic, kafka_api_version):
+#        logging.Handler.__init__(self)
+#
+#        self.kafka_topic_name = topic
+#        self.producer = KafkaProducer(bootstrap_servers = hosts_list,
+#                            api_version = kafka_api_version)
+#
+#    def emit(self, record):
+#        if record.name == 'kafka':
+#            return
+#        try:
+#            msg = self.format(record)
+#            if isinstance(msg, unicode):
+#                msg = msg.encode("utf-8")
+#
+#            self.producer.send(self.kafka_topic_name, msg)
+#        except (KeyboardInterrupt, SystemExit):
+#            raise
+#        except:
+#            self.handleError(record)
+#
+#    def close(self):
+#        if self.producer is not None:
+#            self.producer.close()
+#        logging.Handler.close(self)
 
 if __name__ == "__main__":
   logger = get_logger(name = "mooncake_utils")
